@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaLytics Project Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #164E63;
+            --primary-dark: #0F3D4C;
+            --accent-blue: #0ea5e9;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --border-color: #e2e8f0;
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 3rem 2rem;
+        }
+        
+        .report-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 4rem;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .no-print.print-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(22, 78, 99, 0.2);
+        }
+        
+        .no-print.print-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .no-print.print-btn:active {
+            transform: translateY(0);
+        }
+        
+        h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        
+        h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        p {
+            margin-bottom: 1.25rem;
+            color: var(--text-secondary);
+            font-size: 0.975rem;
+            text-align: justify;
+        }
+        
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        td {
+            color: var(--text-secondary);
+        }
+        
+        tr:nth-child(even) td {
+            background: #fafbfd;
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 2.5rem 0;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        
+        .todo-item input {
+            accent-color: var(--accent-green);
+        }
+        
+        .todo-item span {
+            vertical-align: middle;
+        }
+        
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Hide visuals carousel slides for print standard layout */
+        .carousel-container {
+            margin: 2rem 0;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .report-container {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <button class="no-print print-btn" onclick="window.print()">
+            <i class="ph ph-printer"></i> Save as PDF / Print
+        </button>
+        <h1>Project Report - PharmaLytics Enterprise Analytics Platform</h1>
+<p>---</p>
+<h2>🧬 Name of the Project</h2>
+<p><strong>PharmaLytics</strong> (formerly PharmaDna) — A secure, role-based pharmaceutical data operations, customer relations management (CRM), and performance analytics platform.</p>
+<p>---</p>
+<h2>🎯 Mission</h2>
+<p>To empower pharmaceutical sales organizations with real-time data transparency, structured hierarchical oversight, and secure transactional pipelines. PharmaLytics bridges the gap between field representatives, district managers, and corporate administrators by converting raw transaction logs into high-fidelity actionable intelligence.</p>
+<p>---</p>
+<h2>👁️ Vision</h2>
+<p>To establish a premium, zero-trust standard for pharmaceutical sales operations, facilitating seamless global-to-local target tracking, validation checkpoints, and forecasting pipelines that drive commercial excellence.</p>
+<p>---</p>
+<h2>💡 What was the Need to Create This Project?</h2>
+<p>Prior to PharmaLytics, pharmaceutical companies faced significant operational challenges:
+1. <strong>Disconnected Field Reporting</strong>: Reps lacked a direct, validated channel to submit daily unit sales, leading to delayed or inaccurate reporting.
+2. <strong>Lack of District Level Governance</strong>: District managers could not efficiently track reps reporting under their territory or allocate performance targets locally.
+3. <strong>Data Integrity & Fraud Risks</strong>: Direct database edits bypass approval gates. Admin approval workflows were required to review sales submissions before aggregating metrics.
+4. <strong>Poor Target Tracking</strong>: Organizations struggled to bridge global corporate goals with representative targets, resulting in target misallocations.
+5. <strong>No Unified Analytical Interface</strong>: Teams relied on manual spreadsheets instead of responsive analytics to run forecasting and doctor metrics.</p>
+<p>---</p>
+<h2>🛠️ Technologies Used</h2>
+<h3>Frontend</h3>
+<ul>
+<p><li><strong>HTML5 (Semantic)</strong>: Provides the page structure. Used to implement clean, SEO-optimized, accessible structural hierarchy.</li>
+<li><strong>Vanilla CSS (Custom Variables & Flexbox/Grid)</strong>: Provides a premium look without heavy dependencies (e.g. Tailwind). Implements custom variables (colors, spacing), light/dark themes, sidebar collapse animations, and responsive grids.</li>
+<li><strong>JavaScript (Vanilla ES6)</strong>: Orchestrates routing, visual state toggle, dashboard filtering, notification center, form submissions, and Chart.js rendering.</li>
+<li><strong>Chart.js</strong>: Implements fast, responsive, animated data dashboards (Line, Bar, Doughnut, and Radar charts) with support for dark/light themes.</li>
+<li><strong>Phosphor Icons</strong>: Provides clean icons designed for a medical/scientific data look.</li>
+<li><strong>html2canvas & jsPDF</strong>: Enables clients to capture the DOM dashboard view and export high-fidelity PDF statistics reports locally.</li>
+</ul></p>
+<h3>Backend</h3>
+<ul>
+<p><li><strong>Python (Flask)</strong>: A lightweight WSGI web framework chosen for its flexibility, enabling rapid REST API development, routing, database connectivity, and cross-origin headers management.</li>
+<li><strong>SQLite3</strong>: A serverless, local SQL engine storing regions, doctors, drugs, managers, sales representatives, and sales transaction logs.</li>
+<li><strong>Flask-CORS (Manual Header Hook)</strong>: Manages cross-origin resource sharing, securing communication between local files and the backend services.</li>
+</ul></p>
+<p>---</p>
+<h2>📐 Architecture</h2>
+<p>PharmaLytics is built on a <strong>Client-Server Star Schema</strong> design.</p>
+<p>```mermaid
+graph TD
+    Client[Vanilla JS Frontend client] -- REST APIs / HTTP --> Server[Flask API Gateway]
+    Server -- SQL Queries --> DB[(SQLite Database)]</p>
+<p>    subgraph Star Schema Database
+        DB --> DimRegions[Dim: Regions]
+        DB --> DimDoctors[Dim: Doctors]
+        DB --> DimDrugs[Dim: Drugs]
+        DB --> DimSalesReps[Dim: SalesReps]
+        DB --> FactSales[Fact: Sales]
+    end
+```</p>
+<p>---</p>
+<h2>🔄 Workflow</h2>
+<p>```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User (Admin/Mgr/Rep)
+    participant Client as Frontend Client
+    participant Server as Flask Server
+    participant DB as SQLite DB</p>
+<p>    User->>Client: Input Username & Password + Select Role
+    Client->>Server: POST /api/reps/login (or /api/managers/login)
+    Server->>DB: Query account details
+    DB-->>Server: Return record
+    Server-->>Client: Return Token + Full Name + Role Scope</p>
+<p>    alt User is Rep
+        Client->>Client: Hide admin options, show Daily Sales Entry card
+        User->>Client: Submit Sales (Date, Drug, Units)
+        Client->>Server: POST /api/sales/entry
+        Server->>DB: INSERT into Sales (Status = 'Pending')
+        Server-->>Client: Alert Success
+    else User is Manager
+        Client->>Client: Show Team Widget, hide Sales Entry card
+        User->>Client: Select Team Rep (e.g. Jimmy Grey)
+        Client->>Server: GET /api/kpis?rep=Jimmy Grey&manager=Alisha
+        Server-->>Client: Return Rep's metrics & targets
+    else User is Admin
+        Client->>Client: Show admin settings, approvals, database tools
+        User->>Client: Click Approve on Sales Entry
+        Client->>Server: POST /api/admin/approve-reject (Approved)
+        Server->>DB: UPDATE Sales SET Status = 'Approved'
+        Server-->>Client: Success & reload charts
+    end
+```</p>
+<p>PharmaLytics maintains three distinct workflow pipelines depending on the logged-in role:</p>
+<h3>1. Login Authentication & Session Initialization</h3>
+<ul>
+<p><li>Users select their role (<strong>System Administrator</strong>, <strong>District Sales Manager</strong>, or <strong>Representative</strong>) and enter credentials.</li>
+<li>The system checks database records and returns the user's mapped full name, initials, and roles.</li>
+<li>The frontend stores session attributes (`isLoggedIn`, `userRole`, `repName` or `managerName`) and applies specific workspace views.</li>
+</ul></p>
+<h3>2. Representative Workspace Workflow</h3>
+<ul>
+<p><li><strong>Avatar</strong>: Displays the Representative's full name (e.g., `Jimmy Grey`) and initials (`JG`).</li>
+<li><strong>Dashboard Views</strong>: Shows "My Revenue", "My Units Sold", "My Rank" (ranked against other reps), and "Target Achieved" (achievement percentage).</li>
+<li><strong>Daily Unit Entry</strong>: Reps can enter today's unit sales by selecting the date, country (Germany or Poland), drug, and quantity. The system automatically calculates estimated revenue.</li>
+<li><strong>Approval Queue</strong>: Submissions are entered with a `Pending` status. Reps cannot directly alter database numbers; they must wait for Admin approval.</li>
+<li><strong>Targets page</strong>: Displays Company Goal, Manager's Goal, and Representative's Goal.</li>
+</ul></p>
+<h3>3. District Sales Manager Workspace Workflow</h3>
+<ul>
+<p><li><strong>Avatar</strong>: Displays the Manager's full name (e.g., `Alisha Cordwell`) and initials (`AC`).</li>
+<li><strong>Team Selection</strong>: Shows a team widget displaying representatives under their management. Clicking on a representative filters the KPIs, forecasting, and doctor charts to that rep.</li>
+<li><strong>Targets page</strong>: Shows Company Goal, Manager's own target, and Representative's target card. Managers have the authority to create/edit/delete targets for representatives under their team.</li>
+</ul></p>
+<h3>4. System Administrator Workspace Workflow</h3>
+<ul>
+<p><li><strong>Avatar</strong>: Displays <strong>Shubhajit Ghosh</strong> (`SG`).</li>
+<li><strong>Approvals Panel</strong>: Shows sales submissions needing approval. Administrators can approve or reject entries.</li>
+<li><strong>Targets page</strong>: Shows Company Goal and Manager Goals. Administrators can assign targets to managers but cannot see individual rep goals.</li>
+<li><strong>Database Tools</strong>: Allows database management (seeding, clearing, adding new representatives or drugs).</li>
+</ul></p>
+<p>---</p>
+<h2>🗄️ Files and Function-Level Dependency Analysis</h2>
+<p>Below is a detailed breakdown of all files and their function dependencies.</p>
+<p>---</p>
+<h3>🌐 Frontend Files</h3>
+<h4>1. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/index.html">index.html</a></h4>
+<p>Defines the visual structure of the application, including the sidebar menu, role-specific content blocks, targets configurator, database management tables, and custom modal windows.
+* <strong>If it was not there what could have happened?</strong> 
+  The application would have no visual elements, tables, forms, or navigation tabs, making it impossible for users to interact with the software.</p>
+<p>---</p>
+<h4>2. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/styles.css">styles.css</a></h4>
+<p>Declares design styles, layout systems, light/dark themes, responsive grids, and animation variables.
+* <strong>If it was not there what could have happened?</strong>
+  The interface would fall back to default browser black-and-white layouts. Sidebar transitions, card shadows, theme colors, and flex grid alignment would be lost.</p>
+<p>---</p>
+<h4>3. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/app.js">app.js</a></h4>
+<p>Coordinates all client-side logic, routing, event listeners, data fetching, and Chart.js renderings.</p>
+<p>##### Frontend Javascript Functions</p>
+<table>
+<p><thead>
+<tr>
+<th>Line</th>
+<th>Function</th>
+<th>Purpose</th>
+<th>Critical Dependency (If not there, what would happen?)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+ `resolveChartDefaults()` | Configures default styles for Chart.js (fonts, grid colors). | Charts would render with generic browser styles, ignoring active dark/light mode styles. |
+| 33 | `formatCurrency(value)` | Converts numbers into currency values (e.g., `$1.20M` or `$150.00K`). | Metrics would display as raw unreadable numbers (e.g., `1200000.5`), cluttering the UI. |
+| 48 | `safeFetch(url)` | Wraps fetch calls in try-catch blocks and returns JSON payload. | Unhandled network errors would crash page loading, making error tracking difficult. |
+| 64 | `getFilterParams()` | Gathers active UI filters (country, year, rep, drug, manager) as query params. | Filtering options (e.g. clicking a team member) would not pass parameters to the API, causing charts to show unfiltered data. |
+| 82 | `updateToggleBtnUI(theme)` | Updates the active theme toggle icon buttons (light/dark icons). | Theme icons would mismatch the selected display color mode. |
+| 100 | `initSettings()` | Initializes setting page handlers (theme toggles, text resizing controls). | Users could not change visual settings (fonts, light/dark mode). |
+| 150 | `getChartColor(varName)` | Fetches CSS color variables dynamically for chart drawing. | Charts would fail to match the custom indigo, teal, or amber color theme. |
+| 154 | `applyThemeToChart(chart)` | Re-renders charts using theme colors on theme change. | Toggling dark mode would keep charts styled in light mode, causing contrast issues. |
+| 174 | `refreshChartTheme()` | Loops through active charts and triggers theme updates. | Toggling dark mode would leave charts in their previous styling states. |
+| 190 | `initNavigation()` | Binds click listeners to sidebar links to show/hide specific cards. | The application would not navigate between pages, sticking only to the dashboard. |
+| 285 | `reloadActivePage()` | Refreshes data on the currently active tab. | Switching tabs would display outdated metrics, forcing manual page reloads. |
+| 303 | `fetchStitchedRevenue(params)` | Fetches actual sales and appends forecasted lines. | The revenue forecasting line chart would not load. |
+| 329 | `renderInlineError(...)` | Renders placeholder text inside cards on fetch failure. | Failed cards would remain empty or show "Loading..." indefinitely on network failure. |
+| 342 | `loadDashboardData()` | Fetches core metrics and draws charts (Revenue, Units, Top Drugs, Region Performance). | The main dashboard dashboard would display static mock data. |
+| 714 | `loadAnalyticsData()` | Loads raw sales data grid on the analytics tab. | The analytics grid tab would display an empty table. |
+| 804 | `loadRepsData()` | Fetches representative directories for admin panels. | The admin representative list table would remain empty. |
+| 828 | `loadDrugsData()` | Fetches drug lists for admin panels. | The admin drug catalogue list would remain empty. |
+| 852 | `populateFilters()` | Populates filters (country, year, reps, drugs) dynamically from database. | Dropdown filters would remain empty, blocking custom report generation. |
+| 887 | `initDatabaseManagement()` | Sets up forms to add representatives or drugs. | Admins could not add reps or drugs. |
+| 975 | `initSidebarCollapse()` | Binds sidebar toggle buttons for responsive collapse. | The sidebar could not fold, leaving smaller screen layouts cramped. |
+| 1007 | `validatePasswordConstraints(pwd)` | Enforces password constraints (numbers, upper/lower case, special characters). | Weak credentials could be set during account creation, risking database security. |
+| 1017 | `updateRequirementUI(...)` | Updates visual checklist badges for password constraints. | Users would get no visual feedback on password validation. |
+| 1033 | `checkSelectedRepPasswordStatus(...)` | Checks if a rep password needs modification. | Representatives with default passwords would not be prompted to set a secure password on login. |
+| 1049 | `handleStandardPasswordInput()` | Evaluates password input and calls requirements checkers. | Password requirements UI would not update in real-time. |
+| 1059 | `initLogin()` | Binds login submission and authentication checks. | Users could not log in to their respective workspaces. |
+| 1198 | `completeRepresentativeLogin(rep)` | Initializes sessions for logged-in representatives. | Reps would be redirected to the admin page or locked out of their sales forms. |
+| 1226 | `completeManagerLogin(mgr)` | Initializes sessions for logged-in managers. | Managers would not see their team selectors or restricted targets. |
+| 1247 | `initLogout()` | Clears credentials on logout confirmation. | Session data would persist, enabling unauthorized access after logging out. |
+| 1319 | `addSystemNotification(...)` | Appends real-time alert logs to the notification panel. | Users would miss notifications about goal completions or approvals. |
+| 1331 | `renderNotifications()` | Draws notification badge counters and list items. | The notification dropdown menu would remain empty. |
+| 1376 | `initNotifications()` | Binds clearing hooks to the notification pane. | Users could not clear notifications. |
+| 1415 | `initExportReport()` | Generates PDF summaries using html2canvas & jsPDF. | Users could not download PDF reports. |
+| 1500 | `applyUserRoleViews(role, name)`| Adjusts layouts, initials, and panels based on role. | Workspace views would be identical across all roles, exposing admin tools to reps. |
+| 1576 | `initManagerTeamView(mgr)` | Draws team buttons and binds rep filters for managers. | Managers could not view progress metrics for specific team representatives. |
+| 1648 | `initRepSalesEntry(rep)` | Handles daily unit entries and estimates revenue. | Representatives could not log daily sales records. |
+| 1680 | `updateCalculatedRevenue()` | Updates sales entry revenue estimations. | The estimated revenue display would not update on unit input changes. |
+| 1696 | `updateMonthlySummary()` | Populates monthly sales totals. | Representative monthly summaries would remain unpopulated. |
+| 1804 | `generateRandomSecurePassword()` | Generates strong random passwords. | Admins would have to invent credentials manually, risking weak accounts. |
+| 1824 | `initCredentialsManagement()` | Binds account generation forms. | Admins could not create new manager or representative credentials. |
+| 2012 | `initApprovalsManagement()` | Draws sales entries awaiting approval. | Admins could not view pending sales entries. |
+| 2113 | `initDrugManagement()` | Manages toggling drug status (Active/Inactive). | Inactive drugs would continue appearing in sales entry forms. |
+| 2217 | `initTargetsTracker()` | Manages target cards, checklists, and configurations. | Target progress charts and configurator forms would fail to initialize. |
+| 2603 | `showCustomConfirm(...)` | Renders a styled pop-up dialog modal. | Deletions and network errors would fall back to browser confirm/alert dialogs. |</p>
+<p>---</p>
+<h3>🐍 Backend Files</h3>
+<h4>1. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/backend/app.py">backend/app.py</a></h4>
+<p>Configures Flask, hooks CORS headers, performs database migrations, and exposes database queries as JSON endpoints.
+* <strong>If it was not there what could have happened?</strong>
+  The frontend would have no database service or server endpoints to call, rendering the client-side login and reporting tools nonfunctional.</p>
+<p>##### Backend Python Routes & Helpers</p>
+<table>
+<p><thead>
+<tr>
+<th>Route / Function</th>
+<th>Purpose</th>
+<th>Critical Dependency (If not there, what would happen?)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`get_db_connection()`</td>
+</tr>
+</tbody>
+</table>
+ Returns an active sqlite3 database connection. | Every database transaction would fail, crashing all API routes. |
+| `run_migrations()` | Creates managers and targets tables and seeds default records. | The application database would be missing tables, causing SQL errors on login or target checks. |
+| `add_cors_headers(response)` | Appends CORS header values (methods: GET, POST, OPTIONS, DELETE, PUT). | The browser would block API requests from local client pages. |
+| `execute_filtered_query(...)` | Builds dynamic SQL queries filtering by manager, representative, country, drug, or year. | Custom reporting filters would not work, displaying identical data across all regions. |
+| `GET /api/kpis` | Computes team or representative revenue, units, and active rep count. | Dashboard overview cards would show no statistics. |
+| `GET /api/revenue-trend` | Fetches historical sales trends. | The historical lines chart would not load. |
+| `GET /api/forecast` | Returns actual sales alongside future linear forecasts. | Forecasting charts would show no future predictions. |
+| `GET /api/region-performance` | Aggregates sales metrics grouped by country/region. | Regional doughnut charts would not render. |
+| `GET /api/top-drugs` | Aggregates sales metrics grouped by drug product. | The top drug sales breakdown chart would remain empty. |
+| `GET /api/rep-performance` | Lists rep metrics to calculate global rank. | Representative rank KPI cards would display no rank details. |
+| `GET /api/charts/doctors` | Aggregates doctor purchases. | Doctor sales metrics charts would fail to render. |
+| `GET /api/drugs` | Lists active products for selectors. | Product selectors in the daily sales entry forms would be empty. |
+| `POST /api/reps` | Registers new representative records. | Admins could not register new reps. |
+| `POST /api/drugs` | Creates new pharmaceutical products. | Admins could not add new drugs. |
+| `GET /api/reps/check-password` | Checks if a rep password matches default settings. | The system could not prompt representatives to change default credentials. |
+| `POST /api/reps/set-password` | Updates passwords to custom secure values. | Reps would be stuck with default credentials. |
+| `POST /api/reps/login` | Validates representative credentials. | Representatives could not authenticate. |
+| `POST /api/managers/login` | Validates manager credentials. | District managers could not login. |
+| `GET /api/manager/reps` | Fetches reps assigned to a manager. | Managers could not view their team selector widget. |
+| `POST /api/sales/entry` | Inserts pending sales records. | Representatives could not log sales entries. |
+| `GET /api/admin/notifications` | Returns system events. | Admins would not receive alerts for new sales submissions. |
+| `POST /api/admin/notifications/clear` | Clears system notifications. | Admin notifications would pile up. |
+| `GET /api/reps/monthly-summary` | Returns monthly totals. | Monthly summary cards on the representative dashboard would remain empty. |
+| `GET /api/admin/reps-managers` | Returns directories of reps and managers. | Admins could not view credentials list tables. |
+| `POST /api/admin/save-credentials` | Registers login credentials. | Admins could not create manager/rep accounts. |
+| `GET /api/admin/pending-approvals`| Lists sales records awaiting review. | Admins could not view pending sales entries. |
+| `POST /api/admin/approve-reject` | Approves or rejects sales records. | Pending submissions would remain in the queue, never updating sales metrics. |
+| `GET /api/admin/drugs` | Lists all products with status. | Admins could not view the drug catalogue list. |
+| `POST /api/admin/toggle-drug-status`| Toggles drug product active state. | Inactive products would remain in active catalogs. |
+| `GET /api/drugs/active` | Lists only active products. | Selector dropdowns would display inactive drugs. |
+| `GET /api/targets` | Calculates global, manager, and representative goals and actuals. | The targets page would display no goal progress or target metrics. |
+| `POST /api/admin/set-target` | Saves goal configurations. | Admins or managers could not assign targets. |
+| `POST /api/admin/delete-target/<id>` | Deletes target goal configurations. | Managers could not delete representative targets, leaving obsolete targets in place. |</p>
+<p>---</p>
+<h4>2. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/load_data.py">load_data.py</a></h4>
+<p>Imports Excel files (`Pharma_data_analysis.xlsx`), parses columns, and seeds tables.
+* <strong>If it was not there what could have happened?</strong>
+  The database would start empty, showing no historical data.</p>
+<p>---</p>
+<h4>3. <a href="file:///home/shubhajit/Desktop/proc%20dna%20project/schema.sql">schema.sql</a></h4>
+<p>Defines the database schema, including regions, doctors, drugs, reps, and sales tables.
+* <strong>If it was not there what could have happened?</strong>
+  `load_data.py` would fail to initialize the database schema, blocking data loading.</p>
+<p>---</p>
+<h2>📁 Complete Codebase Function Reference</h2>
+<p>Below is the comprehensive catalog of all custom functions developed and executed across the PharmaLytics codebase, organized separately by file.</p>
+<h3>1. Frontend Interface Controller (app.js)</h3>
+<table>
+<p><thead>
+<tr>
+<th>Function Signature</th>
+<th>Detailed Description of Operations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`resolveChartDefaults()`</td>
+</tr>
+</tbody>
+</table>
+ Sets default styling options for all line, bar, and doughnut charts (such as fonts and borders). |
+| `formatCurrency(val)` | Formats large numbers into clean financial values (e.g., $11.80B, $280.00K). |
+| `safeFetch(url)` | Wraps all network requests in try-catch structures to trap execution errors. |
+| `getFilterParams()` | Collects the currently selected filter values to send to backend endpoints. |
+| `updateToggleBtnUI(theme)` | Sets the UI icons and background colors for the light and dark mode switches. |
+| `initSettings()` | Registers handlers to adjust font sizes and validate password credentials. |
+| `getChartColor(varName)` | Reads CSS color variables from the DOM stylesheet context. |
+| `applyThemeToChart(chart)` | Updates the colors of grids, axes, and legends on a specific chart instance. |
+| `refreshChartTheme()` | Triggers redrawing of all charts with new theme colors. |
+| `initNavigation()` | Binds click events to navigation options to switch between dashboard page views. |
+| `reloadActivePage()` | Forces a reload of data on the active page view. |
+| `fetchStitchedRevenue(params)` | Combines past sales revenue data with future trend forecasts. |
+| `renderInlineError(...)` | Displays inline alert text inside elements when data calls fail. |
+| `loadDashboardData()` | Fetches KPIs and builds the forecasting, regional, drug, and prescription charts. |
+| `loadAnalyticsData()` | Calculates monthly revenue growth percentages and fetches analytics charts. |
+| `loadRepsData()` | Populates a table of all sales reps ranked by total sales. |
+| `loadDrugsData()` | Populates a table of drug products ranked by sales. |
+| `populateFilters()` | Loads list selections for rep and drug dropdown filter items. |
+| `initDatabaseManagement()` | Handles form submits for database resets and spreadsheet uploads. |
+| `initChartReflowObserver()` | Sets up a ResizeObserver to redraw charts smoothly when the main content size changes. |
+| `validatePasswordConstraints(pwd)` | Validates security constraints for passwords. |
+| `updateRequirementUI(...)` | Sets color flags for password criteria checklists. |
+| `checkSelectedRepPasswordStatus(...)` | Checks if the chosen representative already has credentials. |
+| `handleStandardPasswordInput()` | Sets event listeners for input fields. |
+| `initLogin()` | Manages role selection and validates usernames and passwords on click. |
+| `completeRepresentativeLogin(...)` | Applies layout restrictions to representative accounts. |
+| `completeManagerLogin(...)` | Applies layout restrictions to manager accounts. |
+| `initLogout()` | Wipes session storage and logs out users. |
+| `addSystemNotification(...)` | Appends messages to the notification center log list. |
+| `renderNotifications()` | Renders notification badges and populates list templates. |
+| `initNotifications()` | Toggles notification popover panels on bell button click. |
+| `initExportReport()` | Copies metrics tables, cleans formatting, and generates vector PDFs. |
+| `applyUserRoleViews(...)` | Enforces role-based access by hiding restricted options. |
+| `initManagerTeamView(...)` | Loads sales metrics for representatives reporting to a manager. |
+| `initRepSalesEntry(...)` | Configures entry fields and submits pending transactions. |
+| `generateRandomSecurePassword()` | Generates random passwords that meet security guidelines. |
+| `initCredentialsManagement()` | Handles credential updates for administrators. |
+| `initApprovalsManagement()` | Fetches pending sales records and runs approval/rejection operations. |
+| `initDrugManagement()` | Fetches all drugs and allows administrators to toggle their active/inactive status. |
+| `initTargetsTracker()` | Loads team target metrics, alerts if limits are exceeded, and manages target values. |
+| `showCustomConfirm(...)` | Shows custom popup modals for confirmation prompts. |
+| `pollAdminNotifications()` | Polls the database for new pending entries to alert administrators. |
+| `initDocumentView()` | Fills dynamic date fields and sets up printing options. |</p>
+<h3>2. Backend API Endpoint Routes (backend/app.py)</h3>
+<table>
+<p><thead>
+<tr>
+<th>Route & Function Signature</th>
+<th>Detailed Description of Operations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`get_db_connection()`</td>
+</tr>
+</tbody>
+</table>
+ Creates and returns a connection to the SQLite database. |
+| `run_migrations()` | Creates additional metadata tables (such as SalesEntries and Targets) and seeds default accounts. |
+| `add_cors_headers(response)` | Appends CORS security headers to Flask server responses. |
+| `execute_filtered_query(...)` | Compiles dynamic SQL queries using filters for year, country, rep, and drug. |
+| `GET /api/kpis` / `get_kpis()` | Aggregates KPI values (total sales, quantities, active reps, and top city). |
+| `GET /api/revenue-trend` / `get_revenue_trend()` | Retrieves aggregated sales totals grouped by month. |
+| `GET /api/forecast` / `get_forecast()` | Performs linear regression on historical sales to forecast values for upcoming months. |
+| `GET /api/region-performance` / `get_region_performance()` | Aggregates total sales grouped by country and city. |
+| `GET /api/top-drugs` / `get_top_drugs()` | Retrieves total sales grouped by product name and class. |
+| `GET /api/rep-performance` / `get_rep_performance()` | Ranks sales representatives by their total revenue. |
+| `GET /api/charts/doctors` / `get_doctors_chart()` | Retrieves unit quantities and revenues grouped by doctor. |
+| `GET /api/drugs` / `get_drugs()` | Retrieves a list of drug names and classifications. |
+| `POST /api/sales-rep` / `add_sales_rep()` | Creates a new representative profile. |
+| `POST /api/drug` / `add_drug()` | Registers a new drug in the system directory. |
+| `GET /api/reps/password-status` / `check_rep_password()` | Checks if the chosen representative already has password credentials. |
+| `POST /api/reps/set-password` / `set_rep_password()` | Creates or overwrites a representative's password. |
+| `POST /api/reps/login` / `rep_login()` | Validates login credentials for representatives. |
+| `POST /api/managers/login` / `manager_login()` | Validates login credentials for managers. |
+| `GET /api/manager/reps` / `get_manager_reps()` | Retrieves representatives who report to a specific manager. |
+| `POST /api/sales/entry` / `add_sales_entry()` | Saves a representative's new sales entry with a "Pending" status. |
+| `GET /api/admin/notifications` / `get_admin_notifications()` | Checks for unread notification alerts. |
+| `POST /api/admin/clear-notifications` / `clear_admin_notifications()` | Dismisses active notifications. |
+| `GET /api/rep/monthly-summary` / `get_rep_monthly_summary()` | Summarizes monthly sales metrics for a representative. |
+| `GET /api/reps-managers` / `get_reps_managers()` | Lists all representatives and their assigned managers. |
+| `POST /api/admin/save-credentials` / `save_credentials()` | Updates usernames and passwords for representatives or managers. |
+| `GET /api/admin/pending-approvals` / `get_pending_approvals()` | Queries pending sales logs that require validation. |
+| `POST /api/admin/approve-reject` / `approve_reject()` | Approves a pending sale (moving it to the sales table) or rejects it. |
+| `GET /api/admin/drugs` / `get_admin_drugs()` | Lists all registered drugs and their status values. |
+| `POST /api/admin/toggle-drug-status` / `toggle_drug_status()` | Changes a drug's status between active and inactive. |
+| `GET /api/drugs/active` / `get_active_drugs()` | Retrieves active drugs for dropdown fields. |
+| `GET /api/targets` / `get_targets()` | Lists all targets and calculates progress percentages. |
+| `POST /api/admin/set-target` / `set_target()` | Creates a new manager or representative sales target. |
+| `POST /api/admin/delete-target/<target_id>` / `delete_target(...)` | Removes a target configuration from the database. |</p>
+<h3>3. Python Helper Scripts</h3>
+<h4>Data Importer & Validation (load_data.py)</h4>
+<table>
+<p><thead>
+<tr>
+<th>Function Signature</th>
+<th>Detailed Description of Operations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`clean_and_load_data(...)`</td>
+</tr>
+</tbody>
+</table>
+ Cleans category and numeric values, applies the SQL schema script, extracts dimensions (Regions, Doctors, Drugs, SalesReps), maps fact table relationships, and populates the SQLite database. |</p>
+<h4>Markdown PDF Compiler (convert_report.py)</h4>
+<table>
+<p><thead>
+<tr>
+<th>Function Signature</th>
+<th>Detailed Description of Operations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`convert_md_to_html(...)`</td>
+</tr>
+</tbody>
+</table>
+ Uses regex parsing to convert Markdown tags, tables, and lists into styled HTML, embedding them in a print-ready template. |</p>
+<h4>Excel Data Analyzer (analyze.py)</h4>
+<p>A procedural analysis script (no functions defined) that parses the input spreadsheet sheets using `pandas.read_excel(..., sheet_name=None)` and outputs columns, row previews, data structures, and null counts.</p>
+<h4>XML Workbook Parser (parse_excel.py)</h4>
+<p>A procedural workbook parser (no functions defined) that reads the zipped spreadsheet directly. It parses XML configurations to extract shared strings and row dimensions without using standard spreadsheet library helper methods.</p>
+<h3>4. SQLite Database Schema & Analytics SQL Files</h3>
+<h4>Database Schema Definition (schema.sql)</h4>
+<table>
+<p><thead>
+<tr>
+<th>Table Target</th>
+<th>Schema Structure & Key Declarations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`Regions`</td>
+</tr>
+</tbody>
+</table>
+ Stores city and country names with geographical coordinates. |
+| `Doctors` | Stores doctor customer details, distributors, and sales channels. |
+| `Drugs` | Stores drug product lists and product class classifications. |
+| `SalesReps` | Stores sales representative login details and assigned manager names. |
+| `Sales` | Stores fact transaction items, sales amounts, and maps foreign keys. |</p>
+<h4>Advanced Analytics Queries (kpi_queries.sql)</h4>
+<table>
+<p><thead> <tr> <th>Query Goal</th> <th>SQL Window Functions & Aggregation Rationale</th> </tr> </thead> <tbody> <tr> <td>Monthly Revenue Growth</td> </tr> </tbody> </table>  Calculates month-over-month growth values using `LAG() OVER (ORDER BY Year, MonthNum)` window parameters. | | Top 3 Drugs by Region | Identifies top products using `RANK() OVER (PARTITION BY RegionID ORDER BY TotalDrugSales DESC)`. | | Top Representatives | Ranks representatives by revenue using `DENSE_RANK() OVER (ORDER BY SUM(s.TotalSales) DESC)`. | | Doctor Prescriptions | Groups prescription details using database JOINS and SUM operations, ordered by total prescriptions. |</p>
+<h3>5. Frontend Visualizations & Chart.js Configurations</h3>
+<table>
+<p><thead>
+<tr>
+<th>Config Property / Feature</th>
+<th>Detailed Description & Implementation Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`responsive: true`</td>
+</tr>
+</tbody>
+</table>
+ Forces all charts to scale dynamically and fit their container width during resize events or layout shifts. |
+| `maintainAspectRatio: false` | Enables charts to fully stretch vertically and occupy the entire card container height (e.g. `min-height: 300px`). |
+| `indexAxis: 'y'` | Flips chart coordinate orientation to render horizontal bars, used for plotting regional performance. |
+| Dynamic Legend Alignment | Positions labels at the top-right corner (`align: 'end'`, `position: 'top'`) to create a professional corporate report styling. |
+| Grid & Text Theme Binding | Reads active CSS theme variables dynamically and passes new colors during redrawing so charts match light and dark modes. |
+| Numeric Ticks Callbacks | Hooks into Y-axis parameters to format integers to localized currency tags (e.g., $10.00M, $500.00K). |
+| ResizeObserver Integration | Observes main content container size adjustments and executes `chart.resize()` instantly, preventing visual glitches or layout misalignment. |</p>
+<p>---</p>
+<h2>📸 Visual Artifacts</h2>
+<p>Below are UI flow captures showcasing the unified PharmaLytics experience:</p>
+<p>````carousel !<a href="/home/shubhajit/.gemini/antigravity/brain/19eb7f54-0ce0-4f9e-b759-71fbe2bbdca5/.user_uploaded/media__1785001965058.png">PharmaLytics login panel view</a></p>
+<!-- slide -->
+<p>!<a href="/home/shubhajit/.gemini/antigravity/brain/19eb7f54-0ce0-4f9e-b759-71fbe2bbdca5/.user_uploaded/media__1785003626715.png">PharmaLytics dashboard light theme overview</a></p>
+<!-- slide -->
+<p>!<a href="/home/shubhajit/.gemini/antigravity/brain/19eb7f54-0ce0-4f9e-b759-71fbe2bbdca5/.user_uploaded/media__1785007340639.png">PharmaLytics admin settings and credentials manager panel</a></p>
+<!-- slide -->
+<p>!<a href="/home/shubhajit/.gemini/antigravity/brain/19eb7f54-0ce0-4f9e-b759-71fbe2bbdca5/.user_uploaded/media__1785010408143.png">PharmaLytics dark theme targets tracker dashboard</a>
+````</p>
+    </div>
+</body>
+</html>

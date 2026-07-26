@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaLytics</title>
+    <meta name="description" content="Analytics dashboard for pharmaceutical sales performance, revenue forecasting, and representative tracking.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Phosphor Icons (for premium lightweight icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <!-- Login Page Wrapper -->
+    <div id="login-container" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: radial-gradient(circle at top right, #F7F8F6, #EEF3F4); padding: 2rem; font-family: 'Inter', sans-serif;">
+        <div class="login-card" style="width: 100%; max-width: 440px; background: #ffffff; border: 1px solid var(--border-color); padding: 2.5rem; border-radius: var(--border-radius-card); box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <i class="ph-fill ph-prescription" style="font-size: 2.5rem; color: var(--accent-blue);"></i>
+                    <span style="font-weight: 700; font-size: 1.75rem; color: var(--text-primary); letter-spacing: -0.025em;">PharmaLytics</span>
+                </div>
+                <h1 style="color: var(--text-primary); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: -0.025em;">Commercial Intelligence Platform</h1>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">Secure access for authorized personnel</p>
+            </div>
+
+            <form id="login-form">
+                <!-- Login Type Select -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Login Type</label>
+                    <select id="login-role" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; outline: none; transition: border-color 0.2s; cursor: pointer;">
+                        <option value="admin">System Administrator</option>
+                        <option value="manager">District Sales Manager</option>
+                        <option value="rep">Representative</option>
+                    </select>
+                </div>
+
+                <!-- Username Input Container -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Username</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <i class="ph ph-user" style="position: absolute; left: 1rem; color: var(--text-muted); font-size: 1.2rem;"></i>
+                        <input type="text" id="login-username" placeholder="Username" required style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+                    </div>
+                </div>
+
+                <!-- Password Input Section -->
+                <div style="margin-bottom: 1.5rem;" id="login-password-section">
+                    <!-- Standard Password Field -->
+                    <div id="standard-pwd-wrapper">
+                        <label id="pwd-label" style="display: block; color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Password</label>
+                        <div style="position: relative; display: flex; align-items: center; margin-bottom: 0.75rem;">
+                            <i class="ph ph-lock" style="position: absolute; left: 1rem; color: var(--text-muted); font-size: 1.2rem;"></i>
+                            <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 0.75rem 2.75rem 0.75rem 2.75rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+                            <button type="button" id="login-pwd-toggle" style="position: absolute; right: 1rem; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; outline: none; z-index: 2;">
+                                <i class="ph ph-eye" id="login-pwd-toggle-icon" style="font-size: 1.2rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Password Requirement Checklist -->
+                    <div style="background: var(--bg-primary); padding: 0.75rem; border-radius: var(--border-radius-badge); border: 1px solid var(--border-color); font-size: 0.75rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                        <span style="color: var(--text-secondary); font-weight: 600; margin-bottom: 0.15rem; display: block;">Password Constraints:</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-red); transition: color 0.2s;" id="req-length">
+                            <i class="ph ph-x-circle"></i> Minimum 4 characters
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-red); transition: color 0.2s;" id="req-upper">
+                            <i class="ph ph-x-circle"></i> Minimum 1 uppercase letter
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-red); transition: color 0.2s;" id="req-lower">
+                            <i class="ph ph-x-circle"></i> Minimum 1 lowercase letter
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-red); transition: color 0.2s;" id="req-digit">
+                            <i class="ph ph-x-circle"></i> Minimum 1 digit
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-red); transition: color 0.2s;" id="req-special">
+                            <i class="ph ph-x-circle"></i> Minimum 1 special character
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Alert Banner -->
+                <div id="login-error-banner" style="display: none; background: rgba(184, 50, 50, 0.1); border: 1px solid rgba(184, 50, 50, 0.2); padding: 0.75rem; border-radius: var(--border-radius-badge); color: var(--accent-red); font-size: 0.825rem; margin-bottom: 1.25rem; align-items: flex-start; gap: 0.5rem;">
+                    <i class="ph ph-warning" style="font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem;"></i>
+                    <span id="login-error-text">Incorrect username or password.</span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" style="width: 100%; padding: 0.85rem; border-radius: var(--border-radius-btn); border: none; background: var(--accent-blue); color: #ffffff; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 0.2s; box-shadow: none;">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay for mobile screen collapse -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-container" id="main-app-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="ph-fill ph-prescription"></i>
+                    <span class="logo-text">PharmaLytics</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <!-- WORKSPACE SECTION -->
+                    <span class="sidebar-section-title" id="sidebar-workspace-title">Workspace</span>
+                    <li class="nav-item active" data-target="view-dashboard" data-title="Sales Overview" data-subtitle="Track and analyze pharmaceutical sales performance.">
+                        <a href="#"><i class="ph ph-squares-four"></i> <span>Overview</span></a>
+                    </li>
+                    <li class="nav-item" data-target="view-analytics" data-title="Advanced Analytics" data-subtitle="Deep dive into pharmaceutical trends and forecasting.">
+                        <a href="#"><i class="ph ph-chart-line-up"></i> <span>Sales Analytics</span></a>
+                    </li>
+                    <li class="nav-item" data-target="view-reps" data-title="Representative Performance" data-subtitle="Track and compare sales performance of representatives.">
+                        <a href="#"><i class="ph ph-users"></i> <span>Representatives</span></a>
+                    </li>
+                    <li class="nav-item" data-target="view-drugs" data-title="Drug Insights" data-subtitle="Analyze revenue growth and sales statistics of product lines.">
+                        <a href="#"><i class="ph ph-pill"></i> <span>Drug Insights</span></a>
+                    </li>
+                    <li class="nav-item" data-target="view-targets" data-title="Performance Targets" data-subtitle="Monitor sales progress, company goals, and individual achievements.">
+                        <a href="#"><i class="ph ph-target"></i> <span>Targets Tracker</span></a>
+                    </li>
+                    
+                    <!-- MANAGEMENT SECTION -->
+                    <span class="sidebar-section-title" id="sidebar-mgmt-title">Management</span>
+                    <li class="nav-item" id="nav-submissions" data-target="view-submissions" data-title="Sales Submissions" data-subtitle="Review and approve representative sales logs.">
+                        <a href="#"><i class="ph ph-file-text"></i> <span>Sales Submissions</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-catalog" data-target="view-catalog" data-title="Drug Catalog" data-subtitle="Manage pharmaceutical products directory.">
+                        <a href="#"><i class="ph ph-folders"></i> <span>Drug Catalog</span></a>
+                    </li>
+                    
+                    <!-- SYSTEM SECTION -->
+                    <span class="sidebar-section-title" id="sidebar-system-title">System</span>
+                    <li class="nav-item" data-target="view-settings" data-title="System Settings" data-subtitle="Customize your layout, font size, and application theme.">
+                        <a href="#"><i class="ph ph-gear"></i> <span>Settings</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-document" data-target="view-document" data-title="System Documentation" data-subtitle="Read and print PharmaLytics system operational guidelines and report.">
+                        <a href="#"><i class="ph ph-book-open"></i> <span>Document</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-challenges" data-target="view-challenges" data-title="Development Log" data-subtitle="Key issues, resolutions, and professional prompts.">
+                        <a href="#"><i class="ph ph-wrench"></i> <span>Challenges</span></a>
+                    </li>
+                    <li class="nav-item" id="nav-about" data-target="view-about" data-title="About PharmaLytics" data-subtitle="Learn about the platform mission and vision.">
+                        <a href="#"><i class="ph ph-info"></i> <span>About Us</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Dynamic Capsule Theme Switcher -->
+                <div class="theme-switch-wrapper">
+                    <span class="theme-switch-title">Appearance</span>
+                    <div id="theme-capsule-toggle" class="theme-toggle-capsule">
+                        <!-- Sliding pill indicator -->
+                        <div id="theme-capsule-pill" class="theme-pill"></div>
+                        <!-- Labels -->
+                        <span id="theme-label-light" class="theme-label" style="color: #ffffff;">
+                            <i class="ph ph-sun"></i> <span>Light</span>
+                        </span>
+                        <span id="theme-label-dark" class="theme-label">
+                            <i class="ph ph-moon"></i> <span>Dark</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="user-profile" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="avatar" id="user-avatar-icon">AR</div>
+                        <div class="user-info">
+                            <span class="name" id="user-profile-name">Admin User</span>
+                            <span class="role" id="user-profile-role">System Administrator</span>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="icon-btn" style="border: none; background: transparent; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;" title="Sign Out">
+                        <i class="ph ph-sign-out" style="font-size: 1.25rem;"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="icon-btn mobile-menu-btn" id="sidebar-toggle">
+                        <i class="ph ph-list"></i>
+                    </button>
+                    <div>
+                        <h1 class="page-title" id="main-page-title">Sales Overview</h1>
+                        <p class="page-subtitle" id="main-page-subtitle" style="display: none;">Track and analyze pharmaceutical sales performance.</p>
+                        <div id="header-metadata-block" style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem;">
+                            <span id="page-subtitle-text">Track and analyze pharmaceutical sales performance.</span>
+                            <span class="meta-dot">●</span>
+                            <span><i class="ph ph-clock" style="vertical-align: text-bottom;"></i> Updated: <span id="header-last-updated-val">Just now</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="filters-container" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.4rem 0.875rem; border-radius: var(--border-radius-btn); font-family: 'Inter', sans-serif;">
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.35rem; margin-right: 0.25rem;">
+                            <i class="ph ph-funnel" style="font-size: 0.9rem;"></i> Filters
+                        </span>
+                        <select id="filter-country" style="border: none; background: transparent; color: var(--text-primary); font-size: 0.825rem; font-weight: 500; outline: none; cursor: pointer;">
+                            <option value="All">Country: All</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Poland">Poland</option>
+                        </select>
+                        <div style="width: 1px; height: 16px; background: var(--border-color);"></div>
+                        <select id="filter-year" style="border: none; background: transparent; color: var(--text-primary); font-size: 0.825rem; font-weight: 500; outline: none; cursor: pointer;">
+                            <option value="All">Period: All</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                        </select>
+                        <select id="filter-rep" style="border: none; background: transparent; color: var(--text-primary); font-size: 0.825rem; font-weight: 500; outline: none; cursor: pointer;">
+                            <option value="All">Rep: All</option>
+                        </select>
+                        <div style="width: 1px; height: 16px; background: var(--border-color);"></div>
+                        <select id="filter-drug" style="border: none; background: transparent; color: var(--text-primary); font-size: 0.825rem; font-weight: 500; outline: none; cursor: pointer;">
+                            <option value="All">Drug: All</option>
+                        </select>
+                        <div style="width: 1px; height: 16px; background: var(--border-color);"></div>
+                        <button id="clear-filters-btn" style="border: none; background: transparent; color: var(--accent-red); font-size: 0.825rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; border-radius: var(--border-radius-badge); transition: background-color 0.2s;">
+                            <i class="ph ph-x"></i> Clear
+                        </button>
+                    </div>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <button class="icon-btn" id="bell-notification-btn" style="position: relative;">
+                            <i class="ph ph-bell"></i>
+                            <span id="notification-badge" style="position: absolute; top: 0px; right: 0px; width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; display: none;"></span>
+                        </button>
+                        <!-- Notifications Dropdown Overlay -->
+                        <div id="notifications-dropdown" style="display: none; position: absolute; top: 45px; right: 0; width: 320px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow-lg); z-index: 1000; padding: 1.25rem; text-align: left;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <span style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">Notifications</span>
+                                <button id="clear-notifications" style="border: none; background: transparent; color: #2563eb; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Clear all</button>
+                            </div>
+                            <div id="notifications-list" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 240px; overflow-y: auto; font-size: 0.825rem; color: var(--text-secondary);">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-export" id="export-report-btn">
+                        <i class="ph ph-download-simple"></i> Export Report
+                    </button>
+                </div>
+            </header>
+
+            <!-- 1. Dashboard Page View -->
+            <div id="view-dashboard" class="page-view">
+                
+                <!-- Representative Daily Sales Entry Card -->
+                <div id="rep-sales-entry-card" style="display: none; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-card); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+                    <div style="margin-bottom: 1.25rem; font-family: 'Inter', sans-serif;">
+                        <h3 style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <i class="ph ph-file-text" style="color: var(--accent-blue);"></i> New Sales Entry
+                        </h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">Record a completed sales activity</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem; font-family: 'Inter', sans-serif;">
+                        <!-- Calendar Input -->
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Select Date</label>
+                            <input type="date" id="sales-entry-date" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                        </div>
+                        <!-- Country Selector -->
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Select Country</label>
+                            <select id="sales-entry-country" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                <option value="Germany">Germany</option>
+                                <option value="Poland">Poland</option>
+                            </select>
+                        </div>
+                        <!-- Drug Selector -->
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Select Drug Segment</label>
+                            <select id="sales-entry-drug" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                <!-- Dynamically populated -->
+                            </select>
+                        </div>
+                        <!-- Units Input -->
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Units Sold Today</label>
+                            <input type="number" id="sales-entry-units" min="1" placeholder="Enter quantity" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                        </div>
+                    </div>
+                    <!-- Calculation & Action Row -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem; flex-wrap: wrap; gap: 1rem; font-family: 'Inter', sans-serif;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                            Estimated Revenue: <strong id="sales-entry-est-revenue" style="color: var(--text-primary); font-size: 1.1rem;">$0.00</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 0.15rem;">(Calculated using current catalog price: <span id="sales-entry-unit-price">$0.00</span>)</span>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <span id="sales-entry-status" style="font-size: 0.85rem; font-weight: 500;"></span>
+                            <button id="submit-sales-entry-btn" class="btn-primary" style="padding: 0.65rem 1.5rem; font-size: 0.875rem;">
+                                <i class="ph ph-check"></i> Submit Entry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manager Team Members Card -->
+                <div id="manager-team-card" style="display: none; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-card); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+                    <div style="margin-bottom: 1.25rem; font-family: 'Inter', sans-serif;">
+                        <h3 style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <i class="ph ph-users" style="color: var(--accent-blue);"></i> My Sales Team
+                        </h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">Click on any representative below to view their detailed sales progress.</p>
+                    </div>
+                    <div id="manager-team-list" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <!-- Populate dynamically -->
+                    </div>
+                </div>
+
+                <!-- Representative Monthly Summary Cards -->
+                <div id="rep-monthly-summary-cards" style="display: none; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+                    <div class="card kpi-card" style="margin-bottom: 0;">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Monthly Revenue</span>
+                            <div class="icon-wrapper blue"><i class="ph ph-calendar-check"></i></div>
+                        </div>
+                        <div class="kpi-value" id="rep-monthly-revenue-val">$0.00</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">For selected entry month</div>
+                    </div>
+                    <div class="card kpi-card" style="margin-bottom: 0;">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Monthly Sale (Units)</span>
+                            <div class="icon-wrapper blue"><i class="ph ph-package"></i></div>
+                        </div>
+                        <div class="kpi-value" id="rep-monthly-sales-val">0</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">For selected entry month</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- KPI Cards -->
+                    <div class="kpi-cards">
+                        <div class="card kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title" id="kpi-card-1-title">Total Revenue</span>
+                                <div class="icon-wrapper green" id="kpi-card-1-icon-wrap"><i class="ph ph-currency-dollar" id="kpi-card-1-icon"></i></div>
+                            </div>
+                            <div class="kpi-value" id="total-revenue-val">$0.00</div>
+                            <div class="kpi-trend positive" id="kpi-card-1-trend">
+                                <i class="ph ph-trend-up"></i> 14.5% <span>vs last month</span>
+                            </div>
+                        </div>
+                        <div class="card kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title" id="kpi-card-2-title">Units Sold</span>
+                                <div class="icon-wrapper blue" id="kpi-card-2-icon-wrap"><i class="ph ph-shopping-cart" id="kpi-card-2-icon"></i></div>
+                            </div>
+                            <div class="kpi-value" id="total-units-val">0</div>
+                            <div class="kpi-trend positive" id="kpi-card-2-trend">
+                                <i class="ph ph-trend-up"></i> 8.4% <span>vs last month</span>
+                            </div>
+                        </div>
+                        <div class="card kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title" id="kpi-card-3-title">Active Representatives</span>
+                                <div class="icon-wrapper purple" id="kpi-card-3-icon-wrap"><i class="ph ph-users-three" id="kpi-card-3-icon"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-card-3-val">0</div>
+                            <div class="kpi-trend neutral" id="kpi-card-3-trend">
+                                <span>Sales Reps</span>
+                            </div>
+                        </div>
+                        <div class="card kpi-card">
+                            <div class="kpi-header">
+                                <span class="kpi-title" id="kpi-card-4-title">Top Location</span>
+                                <div class="icon-wrapper orange" id="kpi-card-4-icon-wrap"><i class="ph ph-map-pin" id="kpi-card-4-icon"></i></div>
+                            </div>
+                            <div class="kpi-value" id="kpi-card-4-val">-</div>
+                            <div class="kpi-trend positive" id="kpi-card-4-trend">
+                                <span id="top-location-sub">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Stream Intelligence Video Banner -->
+                    <div class="card video-banner-card" style="margin-bottom: 2rem; padding: 0.5rem; overflow: hidden; position: relative; border-radius: var(--border-radius-card); border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        <div class="video-container" style="position: relative; width: 100%; height: 200px; border-radius: calc(var(--border-radius-card) - 4px); overflow: hidden; background: var(--bg-primary);">
+                            <canvas id="dashboard-animation-canvas" style="display: block; width: 100%; height: 100%; opacity: 0.85;"></canvas>
+                            <!-- High-tech Overlay -->
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.75) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; pointer-events: none;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; border-radius: 9999px; background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px); font-size: 0.65rem; font-weight: 800; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15);">
+                                        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite;"></span> AI Intelligence Stream
+                                    </span>
+                                    <span style="font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 0.25rem; background: rgba(0,0,0,0.4); padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                        <i class="ph ph-activity" style="font-size: 0.8rem;"></i> Operational Stream Active
+                                    </span>
+                                </div>
+                                <div style="color: #ffffff; text-align: left;">
+                                    <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 0.25rem 0; letter-spacing: -0.02em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); color: #ffffff !important;">Predictive Pharmaceutical Analytics & Sales CRM Flow</h2>
+                                    <p style="font-size: 0.775rem; margin: 0; color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.3); line-height: 1.3;">Continuous regression forecasting and dynamic targeting synchronized across corporate manager layers and representative sales portals.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-row">
+                        <div class="card chart-card large-chart" data-chart-id="revenue">
+                            <div class="chart-header">
+                                <h2>Revenue Forecasting</h2>
+                                <button class="icon-btn chart-info-btn"><i class="ph ph-dots-three-outline-vertical"></i></button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                            <div class="chart-explanation">
+                                <div class="explanation-badge"><i class="ph ph-cpu"></i> Machine Learning Model</div>
+                                <div class="explanation-title">Revenue Forecasting Explanation</div>
+                                <div class="explanation-desc">This visualization tracks monthly sales revenue against linear least-squares regression models. It uses historical performance patterns to project future revenue flows, allowing managers to anticipate pipeline fluctuations.</div>
+                                <div class="explanation-meta">
+                                    <span><i class="ph ph-function"></i> Regression Model: Linear</span>
+                                    <span><i class="ph ph-arrows-left-right"></i> Range: +3 Months</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card chart-card small-chart" data-chart-id="region">
+                            <div class="chart-header">
+                                <h2>Sales by Region</h2>
+                                <button class="icon-btn chart-info-btn"><i class="ph ph-dots-three-outline-vertical"></i></button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="regionChart"></canvas>
+                            </div>
+                            <div class="chart-explanation">
+                                <div class="explanation-badge"><i class="ph ph-globe"></i> Geographic Segment</div>
+                                <div class="explanation-title">Regional Sales Distribution</div>
+                                <div class="explanation-desc">Shows geographical sales performance by country and city. It automatically ranks regions by volume and groups tail locations under "Other", helping target resource allocation and marketing spend.</div>
+                                <div class="explanation-meta">
+                                    <span><i class="ph ph-bounding-box"></i> Dimension: City / Country</span>
+                                    <span><i class="ph ph-activity"></i> Metric: Total Sales</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="card chart-card small-chart" data-chart-id="drug">
+                            <div class="chart-header">
+                                <h2>Top Performing Drugs</h2>
+                                <button class="icon-btn chart-info-btn"><i class="ph ph-dots-three-outline-vertical"></i></button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="drugChart"></canvas>
+                            </div>
+                            <div class="chart-explanation">
+                                <div class="explanation-badge"><i class="ph ph-pill"></i> Product Segment</div>
+                                <div class="explanation-title">Drug Catalog Performance</div>
+                                <div class="explanation-desc">Ranks pharmaceutical product lines by revenue. Managers use this chart to identify top-selling medications, plan inventory schedules, and monitor product lifecycle statistics.</div>
+                                <div class="explanation-meta">
+                                    <span><i class="ph ph-tag"></i> Dimension: Product Class</span>
+                                    <span><i class="ph ph-trend-up"></i> Metric: Total Revenues</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card chart-card large-chart" data-chart-id="doctor">
+                            <div class="chart-header">
+                                <h2>Doctor-wise Prescriptions</h2>
+                                <button class="icon-btn chart-info-btn"><i class="ph ph-dots-three-outline-vertical"></i></button>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="doctorChart"></canvas>
+                            </div>
+                            <div class="chart-explanation">
+                                <div class="explanation-badge"><i class="ph ph-users"></i> Client Analysis</div>
+                                <div class="explanation-title">Healthcare Customer Volume</div>
+                                <div class="explanation-desc">Evaluates prescribing volumes by clinic and distributor channel. It helps representatives monitor distributor coverage, map accounts, and target doctor outreach campaigns.</div>
+                                <div class="explanation-meta">
+                                    <span><i class="ph ph-database"></i> Source: CRM Activity Logs</span>
+                                    <span><i class="ph ph-split-screen"></i> Channel: Distributor Split</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Analytics Page View -->
+            <div id="view-analytics" class="page-view hidden">
+                <!-- AI Stream Intelligence Video Banner -->
+                <div class="card video-banner-card" style="margin-bottom: 2rem; padding: 0.5rem; overflow: hidden; position: relative; border-radius: var(--border-radius-card); border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                    <div class="video-container" style="position: relative; width: 100%; height: 200px; border-radius: calc(var(--border-radius-card) - 4px); overflow: hidden; background: var(--bg-primary);">
+                        <canvas id="analytics-animation-canvas" style="display: block; width: 100%; height: 100%; opacity: 0.85;"></canvas>
+                        <!-- High-tech Overlay -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.75) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; pointer-events: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; border-radius: 9999px; background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px); font-size: 0.65rem; font-weight: 800; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15);">
+                                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite;"></span> AI Intelligence Stream
+                                </span>
+                                <span style="font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 0.25rem; background: rgba(0,0,0,0.4); padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                    <i class="ph ph-activity" style="font-size: 0.8rem;"></i> Operational Stream Active
+                                </span>
+                            </div>
+                            <div style="color: #ffffff; text-align: left;">
+                                <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 0.25rem 0; letter-spacing: -0.02em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); color: #ffffff !important;">AI Predictive Modeling & Statistical Forecast</h2>
+                                <p style="font-size: 0.775rem; margin: 0; color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px rgba(0,0,0,0.3); line-height: 1.3;">High-performance data aggregation models executing predictive analytics directly on the integrated SQLite records store.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="chart-header">
+                            <h2>Key Business Performance Metric Summary</h2>
+                        </div>
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Here is a detailed breakdown of the statistical insights extracted from the SQL Database analytics pipeline.</p>
+                        <div class="kpi-cards" style="margin-bottom: 2rem;">
+                            <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.02);">
+                                <h4 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Gross Revenue</h4>
+                                <h2 id="analytics-revenue-val" style="font-weight: 700;">$0.00</h2>
+                            </div>
+                            <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.02);">
+                                <h4 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Leading Drug Segment</h4>
+                                <h2 id="analytics-drug-val" style="font-weight: 700;">-</h2>
+                            </div>
+                            <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.02);">
+                                <h4 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Top Location</h4>
+                                <h2 id="analytics-region-val" style="font-weight: 700;">-</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card chart-card" data-chart-id="analyticsRevenue" style="position: relative;">
+                        <div class="chart-header">
+                            <h2>Historical Performance & Future Trend</h2>
+                            <button class="icon-btn chart-info-btn"><i class="ph ph-dots-three-outline-vertical"></i></button>
+                        </div>
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">The line chart displays historical monthly revenue compared with a 3-month forecast generated by the statistical engine.</p>
+                        <div class="chart-container" style="min-height: 400px;">
+                            <canvas id="analyticsRevenueChart"></canvas>
+                        </div>
+                        <div class="chart-explanation">
+                            <div class="explanation-badge"><i class="ph ph-trend-up"></i> Corporate Analytics</div>
+                            <div class="explanation-title">Historical Trends & Forecasting</div>
+                            <div class="explanation-desc">Combines deep historical databases with regression modeling to illustrate long-term corporate expansion curves and support year-over-year target auditing.</div>
+                            <div class="explanation-meta">
+                                <span><i class="ph ph-database"></i> Source: SQLite database</span>
+                                <span><i class="ph ph-function"></i> Model: Multi-Year Regression</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Representative Performance View -->
+            <div id="view-reps" class="page-view hidden">
+                <div class="card">
+                    <div class="chart-header">
+                        <h2>Representative Performance Rankings</h2>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">The table details the total sales revenue generated by each sales representative, mapped directly to their supervisor/manager and sales group.</p>
+                    <div class="table-container">
+                        <table class="data-table" id="reps-table">
+                            <thead>
+                                <tr>
+                                    <th>Representative Name</th>
+                                    <th>Manager</th>
+                                    <th>Sales Team</th>
+                                    <th style="text-align: right;">Total Sales ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Drug Insights View -->
+            <div id="view-drugs" class="page-view hidden">
+                <div class="card">
+                    <div class="chart-header">
+                        <h2>Pharmaceutical Product Insights</h2>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Detailed inventory items and sales metrics of all distributed drugs including classification, unit volume, and gross sales revenue.</p>
+                    <div class="table-container">
+                        <table class="data-table" id="drugs-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Product Class</th>
+                                    <th style="text-align: right;">Units Sold</th>
+                                    <th style="text-align: right;">Gross Sales Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Targets Tracker View -->
+            <div id="view-targets" class="page-view hidden">
+                <!-- Period selection filters -->
+                <div class="card" style="margin-bottom: 2rem; padding: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Target Performance Period</h2>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">Analyze targets achievements for specific months.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <select id="targets-filter-year" style="padding: 0.5rem 1rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); outline: none;">
+                                <option value="2026" selected>2026</option>
+                                <option value="2025">2025</option>
+                            </select>
+                            <select id="targets-filter-month" style="padding: 0.5rem 1rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); outline: none;">
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July" selected>July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Target Progress Cards -->
+                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Company Target -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Company Goal</span>
+                            <span id="target-global-status" class="status-badge pending">Pending</span>
+                        </div>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--accent-blue); margin-bottom: 0.25rem;" id="target-global-actual">$0.00</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            of <span id="target-global-val">$0.00</span> target
+                        </div>
+                        <div class="target-progress-bar-container">
+                            <div class="target-progress-bar-fill" id="target-global-progress" style="width: 0%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">
+                            <span>Achievement</span>
+                            <span id="target-global-pct">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Manager Target -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Manager Goal (<span id="target-manager-name">Patricia Diaz</span>)</span>
+                            <span id="target-manager-status" class="status-badge pending">Pending</span>
+                        </div>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--accent-teal); margin-bottom: 0.25rem;" id="target-manager-actual">$0.00</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            of <span id="target-manager-val">$0.00</span> target
+                        </div>
+                        <div class="target-progress-bar-container">
+                            <div class="target-progress-bar-fill" id="target-manager-progress" style="width: 0%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">
+                            <span>Achievement</span>
+                            <span id="target-manager-pct">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Rep Target -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">My Sales Goal (<span id="target-rep-name">Jimmy Grey</span>)</span>
+                            <span id="target-rep-status" class="status-badge pending">Pending</span>
+                        </div>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--accent-green); margin-bottom: 0.25rem;" id="target-rep-actual">$0.00</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            of <span id="target-rep-val">$0.00</span> target
+                        </div>
+                        <div class="target-progress-bar-container">
+                            <div class="target-progress-bar-fill" id="target-rep-progress" style="width: 0%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">
+                            <span>Achievement</span>
+                            <span id="target-rep-pct">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Target Set Form (visible to admin only) -->
+                <div class="card" id="targets-admin-settings-card" style="margin-bottom: 2rem; display: none;">
+                    <div class="chart-header">
+                        <h2>Configure Performance Goals</h2>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Set and modify targets for the company, specific managers, or individual sales reps.</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; align-items: flex-end;">
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Target Type</label>
+                            <select id="target-set-type" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                <option value="Global">Company / Global</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Rep">Sales Representative</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Entity Name</label>
+                            <select id="target-set-name-select" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none; display: none;">
+                                <!-- Populated dynamically based on type -->
+                            </select>
+                            <input type="text" id="target-set-name-input" placeholder="Company" value="Company" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Year</label>
+                            <input type="number" id="target-set-year" value="2026" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Month</label>
+                            <select id="target-set-month" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July" selected>July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Target Amount ($)</label>
+                            <input type="number" id="target-set-amount" placeholder="Target amount" style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                        </div>
+                        <div>
+                            <button id="submit-set-target" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-btn); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="ph ph-check"></i> Set Target
+                            </button>
+                        </div>
+                    </div>
+                    <div id="target-set-status" style="margin-top: 1rem; font-size: 0.875rem; text-align: center; font-weight: 600;"></div>
+                </div>
+
+                <!-- Targets Table -->
+                <div class="card">
+                    <div class="chart-header">
+                        <h2>Goal Configurations Directory</h2>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Listing of all configured company and representative target parameters.</p>
+                    <div class="table-container">
+                        <table class="data-table" id="targets-table">
+                            <thead>
+                                <tr>
+                                    <th>Goal Type</th>
+                                    <th>Owner / Name</th>
+                                    <th>Target Year</th>
+                                    <th>Target Month</th>
+                                    <th style="text-align: right;">Target Amount</th>
+                                    <th style="text-align: right; width: 140px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5a. Sales Submissions View -->
+            <div id="view-submissions" class="page-view hidden">
+                <!-- Representative Submissions Pending Approvals Card -->
+                <div class="card" id="settings-approvals-card" style="width: 100%;">
+                    <div class="chart-header">
+                        <h2>Pending Review Workflows</h2>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Verify, approve, or reject daily sales submissions recorded by representatives before publishing to executive analytics.</p>
+                    
+                    <div class="table-container">
+                        <table class="data-table" id="approvals-table">
+                            <thead>
+                                <tr>
+                                    <th>Representative</th>
+                                    <th>Drug Segment</th>
+                                    <th>Quantity</th>
+                                    <th>Country</th>
+                                    <th>Period</th>
+                                    <th style="text-align: right;">Est. Revenue</th>
+                                    <th style="text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated dynamically with approval action triggers -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5b. Drug Catalog View -->
+            <div id="view-catalog" class="page-view hidden">
+                <!-- Database & Drug Management Card -->
+                <div class="card" id="settings-db-management-card" style="width: 100%;">
+                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <h2>Drug & Directory Management</h2>
+                        <button class="btn-primary" id="toggle-add-forms-btn" style="padding: 0.5rem 1rem; border-radius: var(--border-radius-btn); font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                            <i class="ph ph-plus-circle"></i> Add Drug / Rep
+                        </button>
+                    </div>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Manage distributed medical drugs directory, track estimated base prices, and update status controls.</p>
+
+                    <!-- Toggleable Add Drug/Rep forms -->
+                    <div id="settings-add-forms-container" class="dashboard-grid" style="display: none; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+                        <!-- Form 1: Sales Rep -->
+                        <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.01); margin-bottom: 0; border-radius: var(--border-radius-card);">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Add Sales Representative</h3>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <input type="text" id="add-rep-name" placeholder="Representative Name" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                <input type="text" id="add-rep-manager" placeholder="Manager Name" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                <input type="text" id="add-rep-team" placeholder="Sales Team (e.g. Alpha)" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                <button id="submit-add-rep" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-btn); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <i class="ph ph-user-plus"></i> Save Representative
+                                </button>
+                                <div id="add-rep-status" style="font-size: 0.875rem; text-align: center;"></div>
+                            </div>
+                        </div>
+                        <!-- Form 2: Drug -->
+                        <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.01); margin-bottom: 0; border-radius: var(--border-radius-card);">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Add Drug Segment</h3>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <input type="text" id="add-drug-name" placeholder="Product Name" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                <input type="text" id="add-drug-class" placeholder="Product Class (e.g. Oncology)" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                <button id="submit-add-drug" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-btn); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <i class="ph ph-plus-circle"></i> Save Drug Segment
+                                </button>
+                                <div id="add-drug-status" style="font-size: 0.875rem; text-align: center;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drug management table + search -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%; max-width: 320px;">
+                            <input type="text" id="drug-mgmt-search" placeholder="Search drug segment..." class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; margin: 0; border-radius: var(--border-radius-input);">
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="drug-mgmt-table">
+                                <thead>
+                                    <tr>
+                                        <th>Drug Name</th>
+                                        <th>Category</th>
+                                        <th style="text-align: right;">Unit Price (Avg)</th>
+                                        <th style="text-align: center;">Status</th>
+                                        <th style="text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Settings View -->
+            <div id="view-settings" class="page-view hidden">
+                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+
+                    <!-- Font Size Settings Card -->
+                    <div class="card">
+                        <div class="chart-header">
+                            <h2>Application Font Size</h2>
+                        </div>
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Adjust typography rendering sizes for readability.</p>
+                        
+                        <div class="settings-group">
+                            <button class="settings-btn" id="font-sm-btn">Small</button>
+                            <button class="settings-btn active" id="font-md-btn">Medium</button>
+                            <button class="settings-btn" id="font-lg-btn">Large</button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Account Credentials Generator Card -->
+                    <div class="card" id="settings-credentials-card" style="border-radius: var(--border-radius-card);">
+                        <div class="chart-header">
+                            <h2>Generate Account Credentials</h2>
+                        </div>
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Manage, generate, and update usernames and passwords for Sales Representatives and Managers.</p>
+                        
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                            <!-- Form 1: Sales Rep Credentials -->
+                            <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.01); margin-bottom: 0; border-radius: var(--border-radius-card);">
+                                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Generate Representative Credentials</h3>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Select Representative</label>
+                                    <select id="gen-rep-select" style="padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                        <!-- Dynamically populated reps -->
+                                    </select>
+                                    <input type="text" id="gen-rep-username" placeholder="Username (e.g. Mary)" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <input type="text" id="gen-rep-password" placeholder="Password" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; padding-right: 6.5rem; border-radius: var(--border-radius-input);">
+                                        <button id="gen-rep-pwd-btn" class="btn-primary" style="position: absolute; right: 0.25rem; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: var(--border-radius-badge); background: #64748b;">Auto-Gen</button>
+                                    </div>
+                                    <button id="submit-gen-rep" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-btn); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                        <i class="ph ph-key"></i> Save Rep Credentials
+                                    </button>
+                                    <span id="gen-rep-status" style="font-size: 0.825rem; font-weight: 500; text-align: center;"></span>
+                                </div>
+                            </div>
+
+                            <!-- Form 2: Manager Credentials -->
+                            <div class="card" style="border: 1px solid var(--border-color); background: rgba(0,0,0,0.01); margin-bottom: 0; border-radius: var(--border-radius-card);">
+                                <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Generate Manager Credentials</h3>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Select Manager</label>
+                                    <select id="gen-manager-select" style="padding: 0.65rem; border-radius: var(--border-radius-input); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none;">
+                                        <!-- Dynamically populated managers -->
+                                    </select>
+                                    <input type="text" id="gen-manager-username" placeholder="Username (e.g. Mary_mgr)" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; border-radius: var(--border-radius-input);">
+                                    <div style="position: relative; display: flex; align-items: center;">
+                                        <input type="text" id="gen-manager-password" placeholder="Password" class="settings-btn" style="text-align: left; width: 100%; border: 1px solid var(--border-color); background: var(--bg-primary); cursor: text; padding-right: 6.5rem; border-radius: var(--border-radius-input);">
+                                        <button id="gen-manager-pwd-btn" class="btn-primary" style="position: absolute; right: 0.25rem; padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: var(--border-radius-badge); background: #64748b;">Auto-Gen</button>
+                                    </div>
+                                    <button id="submit-gen-manager" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-btn); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                        <i class="ph ph-key"></i> Save Manager Credentials
+                                    </button>
+                                    <span id="gen-manager-status" style="font-size: 0.825rem; font-weight: 500; text-align: center;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Document View -->
+            <div id="view-document" class="page-view hidden">
+                <div class="card" style="padding: 3.5rem; max-width: 1000px; margin: 0 auto; line-height: 1.65; font-family: 'Inter', sans-serif; background: var(--bg-card); border-radius: var(--border-radius-card); border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+                        <div>
+                            <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.25rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -0.03em;">System Report & Documentation</h1>
+                            <p style="color: var(--text-secondary); margin: 0.25rem 0 0; font-size: 0.875rem;">Comprehensive PharmaLytics Mission, Architecture, Workflow, and File Catalog</p>
+                        </div>
+                        <button id="download-report-pdf-btn" class="btn-export">
+                            <i class="ph ph-printer"></i> Print / Save PDF
+                        </button>
+                    </div>
+
+                    <!-- Interactive Filters & Search for Documentation -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                        <div class="search-wrapper">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="doc-search" placeholder="Search functional catalog (e.g. resolveChartDefaults, app.py, SELECT)...">
+                        </div>
+                        <div class="doc-filter-tabs">
+                            <button class="doc-tab active" data-target="all">Show All Sections</button>
+                            <button class="doc-tab" data-target="frontend">1. Frontend (app.js)</button>
+                            <button class="doc-tab" data-target="backend">2. Backend (app.py)</button>
+                            <button class="doc-tab" data-target="helpers">3. Python Helpers</button>
+                            <button class="doc-tab" data-target="database">4. Database & Queries</button>
+                            <button class="doc-tab" data-target="chartjs">5. Visualizations</button>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 0.95rem; color: var(--text-primary);">
+                        <!-- Core Info -->
+                        <section style="margin-bottom: 2rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">🧬 Name of the Project</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.975rem;"><strong>PharmaLytics</strong> — A secure, role-based pharmaceutical data operations, customer relations management (CRM), and performance analytics platform.</p>
+                        </section>
+
+                        <section style="margin-bottom: 2rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">🎯 Mission</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.975rem;">To empower pharmaceutical sales organizations with real-time data transparency, structured hierarchical oversight, and secure transactional pipelines. PharmaLytics bridges the gap between field representatives, district managers, and corporate administrators by converting raw transaction logs into high-fidelity actionable intelligence.</p>
+                        </section>
+
+                        <section style="margin-bottom: 2rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">👁️ Vision</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.975rem;">To establish a premium, zero-trust standard for pharmaceutical sales operations, facilitating seamless global-to-local target tracking, validation checkpoints, and forecasting pipelines that drive commercial excellence.</p>
+                        </section>
+
+                        <section style="margin-bottom: 2.5rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">💡 What was the need to create this project?</h2>
+                            <p style="color: var(--text-secondary); font-size: 0.975rem; margin-bottom: 1rem;">Prior to PharmaLytics, pharmaceutical companies faced significant operational challenges:</p>
+                            <ul style="padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;"><strong>Disconnected Field Reporting</strong>: Representatives lacked a validated channel to submit daily unit sales, leading to delayed or inaccurate reporting.</li>
+                                <li style="margin-bottom: 0.5rem;"><strong>Lack of District Governance</strong>: District managers could not efficiently track reps reporting under their territory or allocate performance targets locally.</li>
+                                <li style="margin-bottom: 0.5rem;"><strong>Data Integrity & Fraud Risks</strong>: Direct database edits bypass audit gates. Secure approval workflows were required to verify sales submissions.</li>
+                                <li style="margin-bottom: 0.5rem;"><strong>Target Tracking Gaps</strong>: Corporate administrators struggled to allocate manager target goals down to representatives, resulting in target misallocations.</li>
+                            </ul>
+                        </section>
+
+                        <section style="margin-bottom: 2.5rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">🛠️ Technologies Used</h2>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary);">Technology</th>
+                                        <th style="padding: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary);">Category</th>
+                                        <th style="padding: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary);">Purpose / Rationale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>HTML5 / CSS3</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Frontend Structure & Styling</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Provides modern responsive views, custom layouts (flex/grid), and responsive styling theme variables.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>JavaScript (Vanilla ES6)</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Frontend Logic Controller</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Handles user actions, routing, async API fetches, and dynamic DOM updates.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Chart.js</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Data Visualizations</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Renders animated line, bar, doughnut, and radar statistics charts dynamically.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>html2pdf.js / jsPDF</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Statistics PDF Export</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Converts DOM nodes into vector-accurate printable PDF reports.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>Python (Flask)</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Backend REST Service</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Serves JSON endpoints, manages database connection pools, and updates SQLite tables.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);"><strong>SQLite3</strong></td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Local SQL Database</td>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--border-color);">Provides transactional schema structures, relational lookups, and fast aggregation calculations.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- System Architecture Section -->
+                        <section style="margin-bottom: 2.5rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">📐 System Architecture</h2>
+                            <p style="color: var(--text-secondary);">PharmaLytics is constructed around a <strong>Client-Server Star Schema</strong> design. Below is the data model flow:</p>
+                            
+                            <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin: 2rem 0; flex-wrap: wrap; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-align: center; flex: 1; min-width: 200px;">
+                                    <i class="ph ph-desktop" style="font-size: 2.25rem; color: var(--accent-blue); margin-bottom: 0.5rem; display: block; margin: 0 auto 0.5rem;"></i>
+                                    <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Frontend Client</h4>
+                                    <p style="font-size: 0.75rem; margin: 0; color: var(--text-secondary);">HTML5, CSS3 Theme Variables, JS ES6, Chart.js</p>
+                                </div>
+                                <i class="ph ph-arrow-right" style="font-size: 1.5rem; color: var(--text-secondary);"></i>
+                                <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-align: center; flex: 1; min-width: 200px;">
+                                    <i class="ph ph-cpu" style="font-size: 2.25rem; color: var(--accent-teal); margin-bottom: 0.5rem; display: block; margin: 0 auto 0.5rem;"></i>
+                                    <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Flask API Gateway</h4>
+                                    <p style="font-size: 0.75rem; margin: 0; color: var(--text-secondary);">REST Routing, CORS headers management, SQLite connections</p>
+                                </div>
+                                <i class="ph ph-arrow-right" style="font-size: 1.5rem; color: var(--text-secondary);"></i>
+                                <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-align: center; flex: 1; min-width: 200px;">
+                                    <i class="ph ph-database" style="font-size: 2.25rem; color: var(--accent-green); margin-bottom: 0.5rem; display: block; margin: 0 auto 0.5rem;"></i>
+                                    <h4 style="font-weight: 700; margin-bottom: 0.25rem;">SQLite Star Schema</h4>
+                                    <p style="font-size: 0.75rem; margin: 0; color: var(--text-secondary);">Dim: Regions, Doctors, Drugs, SalesReps | Fact: Sales</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Workflow Section -->
+                        <section style="margin-bottom: 2.5rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">🔄 Workflow Channels</h2>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1.5rem; margin: 2rem 0; font-family: 'Inter', sans-serif;">
+                                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <div style="background: var(--accent-blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem;">1</div>
+                                    <div>
+                                        <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Authentication & Workspace Initialization</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Users choose their roles (Admin/Manager/Rep) and type username/password. The frontend initiates local sessions and scopes layout views dynamically.</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <div style="background: var(--accent-teal); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem;">2</div>
+                                    <div>
+                                        <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Sales Entries logging</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Representatives log sales records in their workspace. Submissions are marked with a <code>Pending</code> status inside the SQLite database.</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                    <div style="background: var(--accent-green); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem;">3</div>
+                                    <div>
+                                        <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Verification Gate & Analytical Calculation</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">System administrators review and approve pending records. Once updated to <code>Approved</code>, the fact transaction data is aggregated to trigger dynamic dashboard calculations and forecasting charts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- File-Level Functional Dependency Analysis Section -->
+                        <section style="margin-bottom: 2rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem; page-break-before: always;">🗂️ File-Level Functional Dependency Catalog</h2>
+                            
+                            <!-- Frontend Table -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary);">Frontend Javascript Controllers (`app.js`)</h3>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 2rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 20%;">Function Name</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 40%;">Purpose / Action</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 40%;">Critical Dependency (If missing, what would break?)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>resolveChartDefaults()</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Applies global font/theme configurations to Chart.js context.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Charts would draw with default styles, resulting in visual rendering bugs under dark theme mode.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>formatCurrency(value)</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Converts values to formatted text (e.g. $1.20M).</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Metrics would show raw, unreadable numbers on dashboard KPI cards.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>safeFetch(url)</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Executes API calls inside safe try-catch wrappers.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Unhandled network errors would crash page loading, making error tracking difficult.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>getFilterParams()</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Collects dropdown filter states as URL queries.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Filtering options would not pass parameters to the API, causing charts to show unfiltered data.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initNavigation()</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Coordinates transitions between sidebar layout panels.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">The application would not navigate between pages, sticking only to the dashboard.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>loadDashboardData()</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Refreshes analytics, KPIs, and Chart.js dashboards.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Overview charts and analytics summary stats would remain empty.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>applyUserRoleViews(...)</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Restricts layouts and updates user name profiles.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Workspace views would be identical across all roles, exposing admin tools to reps.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initManagerTeamView(...)</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Fetches reps reporting to manager and binds filters.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Managers could not view progress metrics for specific team representatives.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initTargetsTracker()</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Loads target metrics, checks limits, and configures goals.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">The target tracking page would fail to load target cards.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>showCustomConfirm(...)</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Renders styled confirmation/alert pop-up modals.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Confirmation dialogs would fall back to default browser boxes, degrading UI aesthetics.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Backend Table -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary); page-break-before: always;">Backend Service Routes (`backend/app.py`)</h3>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 20%;">Route endpoint</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 40%;">Backend Operation</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 40%;">Critical Dependency (If missing, what would break?)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/kpis</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Computes actual revenue and unit sums over dynamic filters.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">KPI summary figures at the top of the dashboard would display no data.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/forecast</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Computes regression forecast parameters for linear predictions.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">The forecasting section of the line chart would fail to draw.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/managers/login</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Verifies manager credentials and returns success token.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">District managers would be locked out, unable to access the web application.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/manager/reps</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Queries database for representatives reporting to manager.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">The team members select buttons on the manager dashboard would remain empty.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/sales/entry</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Inserts pending sales submissions into database.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Representatives could not log daily sales records.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/approve-reject</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Approves or rejects pending sales logs.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Pending submissions would remain in the queue, never updating sales metrics.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/targets</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Calculates dynamic targets versus actuals.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">The targets tracker dashboard would show no goals data.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/delete-target/&lt;id&gt;</code></td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Removes goal configuration records from database.</td>
+                                        <td style="padding: 0.5rem; border: 1px solid var(--border-color);">Managers and Admins could not remove obsolete targets, causing errors.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- Complete Codebase Function Reference Catalog -->
+                        <section style="margin-bottom: 2rem;">
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem; page-break-before: always;">🗂️ Complete Codebase Function Reference</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Below is the comprehensive catalog of all custom functions developed and executed across the PharmaLytics codebase, organized separately by file.</p>
+                            
+                            <div class="doc-section" data-section="frontend">
+                                <!-- 1. app.js -->
+                                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary);">1. Frontend Interface Controller (`app.js`)</h3>
+                                <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 2rem;">
+                                    <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Function Signature</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Detailed Description of Operations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>resolveChartDefaults()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Sets default styling options for all line, bar, and doughnut charts (such as fonts and borders).</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>formatCurrency(val)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Formats large numbers into clean financial values (e.g., $11.80B, $280.00K).</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>safeFetch(url)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Wraps all network requests in try-catch structures to trap execution errors.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>getFilterParams()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Collects the currently selected filter values to send to backend endpoints.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>updateToggleBtnUI(theme)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Sets the UI icons and background colors for the light and dark mode switches.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initSettings()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Registers handlers to adjust font sizes and validate password credentials.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>getChartColor(varName)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Reads CSS color variables from the DOM stylesheet context.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>applyThemeToChart(chart)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Updates the colors of grids, axes, and legends on a specific chart instance.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>refreshChartTheme()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Triggers redrawing of all charts with new theme colors.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initNavigation()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Binds click events to navigation options to switch between dashboard page views.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>reloadActivePage()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Forces a reload of data on the active page view.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>fetchStitchedRevenue(params)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Combines past sales revenue data with future trend forecasts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>renderInlineError(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Displays inline alert text inside elements when data calls fail.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>loadDashboardData()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Fetches KPIs and builds the forecasting, regional, drug, and prescription charts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>loadAnalyticsData()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Calculates monthly revenue growth percentages and fetches analytics charts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>loadRepsData()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Populates a table of all sales reps ranked by total sales.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>loadDrugsData()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Populates a table of drug products ranked by sales.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>populateFilters()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Loads list selections for rep and drug dropdown filter items.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initDatabaseManagement()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Handles form submits for database resets and spreadsheet uploads.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initChartReflowObserver()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Sets up a ResizeObserver to redraw charts smoothly when the main content size changes.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>validatePasswordConstraints(pwd)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Validates security constraints for passwords.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>updateRequirementUI(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Sets color flags for password criteria checklists.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>checkSelectedRepPasswordStatus(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Checks if the chosen representative already has credentials.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>handleStandardPasswordInput()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Sets event listeners for input fields.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initLogin()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Manages role selection and validates usernames and passwords on click.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>completeRepresentativeLogin(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Applies layout restrictions to representative accounts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>completeManagerLogin(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Applies layout restrictions to manager accounts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initLogout()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Wipes session storage and logs out users.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>addSystemNotification(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Appends messages to the notification center log list.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>renderNotifications()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Renders notification badges and populates list templates.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initNotifications()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Toggles notification popover panels on bell button click.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initExportReport()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Copies metrics tables, cleans formatting, and generates vector PDFs.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>applyUserRoleViews(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Enforces role-based access by hiding restricted options.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initManagerTeamView(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Loads sales metrics for representatives reporting to a manager.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initRepSalesEntry(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Configures entry fields and submits pending transactions.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>generateRandomSecurePassword()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Generates random passwords that meet security guidelines.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initCredentialsManagement()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Handles credential updates for administrators.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initApprovalsManagement()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Fetches pending sales records and runs approval/rejection operations.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initDrugManagement()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Fetches all drugs and allows administrators to toggle their active/inactive status.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initTargetsTracker()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Loads team target metrics, alerts if limits are exceeded, and manages target values.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>showCustomConfirm(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Shows custom popup modals for confirmation prompts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>pollAdminNotifications()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Polls the database for new pending entries to alert administrators.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>initDocumentView()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Fills dynamic date fields and sets up printing options.</td></tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <div class="doc-section" data-section="backend">
+                            <!-- 2. app.py -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary);">2. Backend API Endpoint Routes (`backend/app.py`)</h3>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 2rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Route & Function Signature</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Detailed Description of Operations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>get_db_connection()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Creates and returns a connection to the SQLite database.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>run_migrations()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Creates additional metadata tables (such as SalesEntries and Targets) and seeds default accounts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>add_cors_headers(response)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Appends CORS security headers to Flask server responses.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>execute_filtered_query(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Compiles dynamic SQL queries using filters for year, country, rep, and drug.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/kpis</code><br><code>get_kpis()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Aggregates KPI values (total sales, quantities, active reps, and top city).</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/revenue-trend</code><br><code>get_revenue_trend()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves aggregated sales totals grouped by month.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/forecast</code><br><code>get_forecast()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Performs linear regression on historical sales to forecast values for upcoming months.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/region-performance</code><br><code>get_region_performance()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Aggregates total sales grouped by country and city.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/top-drugs</code><br><code>get_top_drugs()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves total sales grouped by product name and class.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/rep-performance</code><br><code>get_rep_performance()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Ranks sales representatives by their total revenue.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/charts/doctors</code><br><code>get_doctors_chart()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves unit quantities and revenues grouped by doctor.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/drugs</code><br><code>get_drugs()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves a list of drug names and classifications.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/sales-rep</code><br><code>add_sales_rep()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Creates a new representative profile.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/drug</code><br><code>add_drug()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Registers a new drug in the system directory.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/reps/password-status</code><br><code>check_rep_password()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Checks if the chosen representative already has password credentials.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/reps/set-password</code><br><code>set_rep_password()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Creates or overwrites a representative's password.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/reps/login</code><br><code>rep_login()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Validates login credentials for representatives.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/managers/login</code><br><code>manager_login()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Validates login credentials for managers.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/manager/reps</code><br><code>get_manager_reps()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves representatives who report to a specific manager.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/sales/entry</code><br><code>add_sales_entry()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Saves a representative's new sales entry with a "Pending" status.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/admin/notifications</code><br><code>get_admin_notifications()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Checks for unread notification alerts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/clear-notifications</code><br><code>clear_admin_notifications()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Dismisses active notifications.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/rep/monthly-summary</code><br><code>get_rep_monthly_summary()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Summarizes monthly sales metrics for a representative.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/reps-managers</code><br><code>get_reps_managers()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Lists all representatives and their assigned managers.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/save-credentials</code><br><code>save_credentials()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Updates usernames and passwords for representatives or managers.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/admin/pending-approvals</code><br><code>get_pending_approvals()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Queries pending sales logs that require validation.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/approve-reject</code><br><code>approve_reject()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Approves a pending sale (moving it to the sales table) or rejects it.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/admin/drugs</code><br><code>get_admin_drugs()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Lists all registered drugs and their status values.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/toggle-drug-status</code><br><code>toggle_drug_status()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Changes a drug's status between active and inactive.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/drugs/active</code><br><code>get_active_drugs()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Retrieves active drugs for dropdown fields.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>GET /api/targets</code><br><code>get_targets()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Lists all targets and calculates progress percentages.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/set-target</code><br><code>set_target()</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Creates a new manager or representative sales target.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>POST /api/admin/delete-target/&lt;target_id&gt;</code><br><code>delete_target(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Removes a target configuration from the database.</td></tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <div class="doc-section" data-section="helpers">
+                            <!-- Helper Scripts -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary); page-break-before: always;">3. Python Helper Scripts</h3>
+                            
+                            <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">Data Importer & Validation (`load_data.py`)</h4>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Function Signature</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Detailed Description of Operations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>clean_and_load_data(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Cleans category and numeric values, applies the SQL schema script, extracts dimensions (Regions, Doctors, Drugs, SalesReps), maps fact table relationships, and populates the SQLite database.</td></tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">Markdown PDF Compiler (`convert_report.py`)</h4>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Function Signature</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Detailed Description of Operations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>convert_md_to_html(...)</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Uses regex parsing to convert Markdown tags, tables, and lists into styled HTML, embedding them in a print-ready template.</td></tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">Excel Data Analyzer (`analyze.py`)</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">A procedural analysis script (no functions defined) that parses the input spreadsheet sheets using <code>pandas.read_excel(..., sheet_name=None)</code> and outputs columns, row previews, data structures, and null counts.</p>
+
+                            <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">XML Workbook Parser (`parse_excel.py`)</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">A procedural workbook parser (no functions defined) that reads the zipped spreadsheet directly. It parses XML configurations to extract shared strings and row dimensions without using standard spreadsheet library helper methods.</p>
+                            </div>
+
+                            <div class="doc-section" data-section="database">
+                            <!-- Database Scripts -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary); page-break-before: always;">4. SQLite Database Schema & Analytics SQL Files</h3>
+                            
+                            <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">Database Schema Definition (`schema.sql`)</h4>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Table Target</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Schema Structure & Key Declarations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>Regions</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Stores city and country names with geographical coordinates.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>Doctors</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Stores doctor customer details, distributors, and sales channels.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>Drugs</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Stores drug product lists and product class classifications.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>SalesReps</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Stores sales representative login details and assigned manager names.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>Sales</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Stores fact transaction items, sales amounts, and maps foreign keys.</td></tr>
+                                </tbody>                             <h4 style="margin-top: 1rem; margin-bottom: 0.25rem; font-weight: 700;">Advanced Analytics Queries (`kpi_queries.sql`)</h4>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 2rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Query Goal</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">SQL Window Functions & Aggregation Rationale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Monthly Revenue Growth</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Calculates month-over-month growth values using <code>LAG() OVER (ORDER BY Year, MonthNum)</code> window parameters.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Top 3 Drugs by Region</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Identifies top products using <code>RANK() OVER (PARTITION BY RegionID ORDER BY TotalDrugSales DESC)</code>.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Top Representatives</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Ranks representatives by revenue using <code>DENSE_RANK() OVER (ORDER BY SUM(s.TotalSales) DESC)</code>.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Doctor Prescriptions</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Groups prescription details using database JOINS and SUM operations, ordered by total prescriptions.</td></tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <div class="doc-section" data-section="chartjs">
+                            <!-- Chart.js Section -->
+                            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--primary); page-break-before: always;">5. Frontend Visualizations & Chart.js Configurations</h3>
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 30%; text-align: left;">Config Property / Feature</th>
+                                        <th style="padding: 0.5rem; border: 1px solid var(--border-color); background: var(--bg-primary); width: 70%; text-align: left;">Detailed Description & Implementation Rationale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>responsive: true</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Forces all charts to scale dynamically and fit their container width during resize events or layout shifts.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>maintainAspectRatio: false</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Enables charts to fully stretch vertically and occupy the entire card container height (e.g. `min-height: 300px`).</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);"><code>indexAxis: 'y'</code></td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Flips chart coordinate orientation to render horizontal bars, used for plotting regional performance.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Dynamic Legend Alignment</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Positions labels at the top-right corner (`align: 'end'`, `position: 'top'`) to create a professional corporate report styling.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Grid & Text Theme Binding</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Reads active CSS theme variables dynamically and passes new colors during redrawing so charts match light and dark modes.</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Numeric Ticks Callbacks</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Hooks into Y-axis parameters to format integers to localized currency tags (e.g., $10.00M, $500.00K).</td></tr>
+                                    <tr><td style="padding: 0.5rem; border: 1px solid var(--border-color);">ResizeObserver Integration</td><td style="padding: 0.5rem; border: 1px solid var(--border-color);">Observes main content container size adjustments and executes <code>chart.resize()</code> instantly, preventing visual glitches or layout misalignment.</td></tr>
+                                </tbody>
+                             </table>
+                            </div>
+                        </section>
+                    </div>
+                <!-- 7. Challenges View -->
+            <div id="view-challenges" class="page-view hidden">
+                <div class="card" style="padding: 3rem; max-width: 900px; margin: 0 auto; line-height: 1.6; font-family: 'Inter', sans-serif;">
+                    <div style="border-bottom: 2px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+                        <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.25rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -0.03em;">Key Development Challenges</h1>
+                        <p style="color: var(--text-secondary); margin: 0.25rem 0 0; font-size: 0.875rem;">A record of major architectural bottlenecks, resolutions, and professional prompts used during the development of PharmaLytics.</p>
+                    </div>
+
+                    <!-- Interactive Filters & Search -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                        <div class="search-wrapper">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="challenge-search" placeholder="Search challenges by issue, description, resolution, or prompt...">
+                        </div>
+                        <div class="challenge-filter-tabs">
+                            <button class="challenge-tab active" data-category="all">All Challenges</button>
+                            <button class="challenge-tab" data-category="security">Security & Auth</button>
+                            <button class="challenge-tab" data-category="database">Database & Performance</button>
+                            <button class="challenge-tab" data-category="ui">UI & Accessibility</button>
+                        </div>
+                    </div>
+
+                    <div id="challenges-accordion-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Challenge 1 -->
+                        <div class="accordion-item" data-category="security">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-shield-warning" style="color: var(--accent-red); font-size: 1.35rem;"></i> CORS Preflight Blocks on DELETE Operations
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Browser CORS preflight security checks blocked custom HTTP verb (<code>DELETE</code>) requests fired from the frontend client to the Flask backend dev server.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Expanded the allowed CORS header methods inside the Flask backend connection hook to include <code>DELETE</code> and <code>PUT</code>, and adapted frontend deletion endpoints to accept safe fallback <code>POST</code> requests.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "CORS security headers block target deletion requests. Update Flask CORS method headers to include DELETE, and map deletion controllers to accept fallback POST routing."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('CORS security headers block target deletion requests. Update Flask CORS method headers to include DELETE, and map deletion controllers to accept fallback POST routing.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Challenge 2 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-bounding-box" style="color: var(--accent-blue); font-size: 1.35rem;"></i> Horizontal PDF Layout Splitting & Height Truncation
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Capturing wide dashboard DOM structures (<code>width: 1000px</code>) directly caused <code>html2pdf.js</code> to split the document horizontally across portrait layouts, creating blank space and missing table pages.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Compiled the report elements dynamically inside an isolated `750px` width compiler container, locked tables with <code>table-layout: fixed</code>, and instructed the PDF generator to split pages using CSS directives.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "html2pdf splits wide tables horizontally. Constrain print container width to 750px, force fixed table layouts, and wrap long table cell words dynamically."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('html2pdf splits wide tables horizontally. Constrain print container width to 750px, force fixed table layouts, and wrap long table cell words dynamically.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 3 -->
+                        <div class="accordion-item" data-category="database">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-lock" style="color: var(--accent-teal); font-size: 1.35rem;"></i> Multi-Role Targets Conflict
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Administrators setting representative goals directly bypassed district managers' hierarchy, creating conflict and data clutter.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Restructured target scopes: Administrators set goals for corporate and managers; Managers assign, edit, and delete goals for representative sales teams.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Enforce role delegation: managers assign/edit targets of reporting reps; admins manage company goals and managers targets only."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Enforce role delegation: managers assign/edit targets of reporting reps; admins manage company goals and managers targets only.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 4 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-bug" style="color: var(--accent-red); font-size: 1.35rem;"></i> Closest Selector Crash on Target Page Load
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> The JavaScript execution crashed with a <code>TypeError</code> when loading targets tracker because selectors queried `.closest('.kpi-card')` which was missing from the redesigned targets cards.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Updated the DOM search selector class from <code>.kpi-card</code> to `.card` in targets renderer blocks.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Fix TypeError: Cannot read property closest of null on targets page. Update card selector from kpi-card to card."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Fix TypeError: Cannot read property closest of null on targets page. Update card selector from kpi-card to card.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 5 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-chat-centered-text" style="color: var(--accent-blue); font-size: 1.35rem;"></i> Native Browser Confirmation Dialog Replacements
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Browser-native alert and confirmation popups disrupted the custom dashboard theme and looked unprofessional.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Created an overlay container `#generic-confirm-modal` in HTML and bound it to a custom async handler <code>showCustomConfirm()</code> to replace native dialogs with styled overlay confirmations.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Replace the delete warning error with a custom modal confirmation interface, converting all native browser confirm and alert boxes to styled modals."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Replace the delete warning error with a custom modal confirmation interface, converting all native browser confirm and alert boxes to styled modals.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 6 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-text-t" style="color: var(--accent-teal); font-size: 1.35rem;"></i> Font Scaling & Accessibility Bounds
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Restructuring settings views required providing text resizing boundaries strictly isolated from metrics-card borders.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Bound buttons in Settings to toggle custom body HTML class mappings (<code>font-sm</code>, <code>font-md</code>, <code>font-lg</code>) and defined relative sizes using <code>rem</code> units.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "In the settings view only, add controls to change the font size of the webpage and generate account credentials, keeping management sections isolated."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('In the settings view only, add controls to change the font size of the webpage and generate account credentials, keeping management sections isolated.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 7 -->
+                        <div class="accordion-item" data-category="security">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-key" style="color: var(--accent-blue); font-size: 1.35rem;"></i> Zero-Trust Default Password Enforcement
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> System security was compromised if representatives could login indefinitely using default auto-generated passwords.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Added database status checkers to prompt users on login if their accounts utilized default credentials, forcing redirects to the password config screen.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Force reps with default credentials to change passwords. Add complexity validation requirements (uppercase, lowercase, number, special char) for new passwords."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Force reps with default credentials to change passwords. Add complexity validation requirements (uppercase, lowercase, number, special char) for new passwords.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 8 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-palette" style="color: var(--accent-teal); font-size: 1.35rem;"></i> Aesthetics De-cluttering & Visual Brand Realignment
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> The initial platform design used teal-purple gradients, generic line icons, and excessive padding, giving it a generic "AI SaaS dashboard" feel rather than a professional enterprise data app.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Cleaned typography using Inter and Plus Jakarta Sans, simplified borders, and set the dominant brand primary color to Deep Medical Blue (<code>#164E63</code>).
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Kill the modern SaaS startup look. Align PharmaLytics design with a healthcare-oriented data analytics and CRM tool. Adopt Deep Medical Blue (#164E63) as the dominant primary brand color."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Kill the modern SaaS startup look. Align PharmaLytics design with a healthcare-oriented data analytics and CRM tool. Adopt Deep Medical Blue (#164E63) as the dominant primary brand color.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge 9 -->
+                        <div class="accordion-item" data-category="ui">
+                            <div class="accordion-header">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; color: var(--primary-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-layout" style="color: var(--accent-blue); font-size: 1.35rem;"></i> Sidebar Toggle Collapse Alignment & Chart Reflow Observer
+                                </h3>
+                                <i class="ph ph-caret-down toggle-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                                    <strong>Issue:</strong> Transition animations on navbar collapse/expand actions created latency. Chart.js calculations executed before the content card width settled, resulting in cut-off graphs.
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                    <strong>Resolution:</strong> Synchronized both `width` and `margin-left` transitions in CSS, and bound a high-performance, native <code>ResizeObserver</code> on the main content wrapper in JavaScript. This triggers real-time Chart.js scaling frame-by-frame as the layout changes size.
+                                </p>
+                                <div class="prompt-box">
+                                    <strong>Prompt:</strong> "Resolve graph misalignment and clipping on navbar collapse toggles. Ensure all charts auto-reflow and align perfectly as the sidebar slides open/closed."
+                                    <button class="copy-btn" onclick="navigator.clipboard.writeText('Resolve graph misalignment and clipping on navbar collapse toggles. Ensure all charts auto-reflow and align perfectly as the sidebar slides open/closed.')" title="Copy prompt">
+                                        <i class="ph ph-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+            <!-- 8. About Us View -->
+            <div id="view-about" class="page-view hidden">
+                <div class="card" style="padding: 4rem 3rem; max-width: 900px; margin: 0 auto; line-height: 1.7; font-family: 'Inter', sans-serif;">
+                    <div style="text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 2rem; margin-bottom: 2.5rem;">
+                        <i class="ph-fill ph-prescription" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 0.75rem;"></i>
+                        <h1 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -0.03em;">About PharmaLytics</h1>
+                        <p style="color: var(--text-secondary); margin: 0.5rem 0 0; font-size: 1rem;">Next-Generation Pharmaceutical Data Operations and Performance Management</p>
+                    </div>
+
+                    <div style="font-size: 0.975rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 2rem;">
+                        <section>
+                            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">🌐 What is PharmaLytics?</h2>
+                            <p>
+                                PharmaLytics is an enterprise-grade analytics, customer relations management, and compliance validation platform tailored for pharmaceutical commercial teams. The platform consolidates regional pharmaceutical transactions, doctor purchase patterns, and drug product catalogs, transforming raw daily reports into structured analytical insights.
+                            </p>
+                        </section>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+                            <section style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px;">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-target" style="color: var(--accent-blue); font-size: 1.35rem;"></i> Corporate Mission
+                                </h3>
+                                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                                    To establish strict transactional transparency and validation checkpoints across all levels of pharmaceutical field sales operations. We aim to replace manual spreadsheets with zero-trust validation gateways, allowing direct data accountability between representatives, managers, and corporate admins.
+                                </p>
+                            </section>
+
+                            <section style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px;">
+                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="ph ph-eye" style="color: var(--accent-teal); font-size: 1.35rem;"></i> Corporate Vision
+                                </h3>
+                                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                                    To stand as the trusted standard for pharmaceutical commercial analytics and auditing. By combining responsive data modeling with role-based dashboard delegation and regression-based sales forecasting, we equip companies with tools to align local district activities with overall global targets.
+                                </p>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <!-- Custom Logout Confirmation Modal -->
+    <div id="logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 9999; font-family: 'Inter', sans-serif; transition: opacity 0.2s;">
+        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-modal); width: 100%; max-width: 400px; padding: 2.25rem; box-shadow: var(--shadow-lg); text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; margin: 0 auto 1.25rem;">
+                <i class="ph ph-warning-circle" style="font-size: 2rem; color: var(--accent-red);"></i>
+            </div>
+            <h3 style="color: var(--text-primary); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Confirm Logout</h3>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.75rem; line-height: 1.5;">Are you sure you want to log out? Any unsaved changes in database management forms will be lost.</p>
+            <div style="display: flex; gap: 0.75rem; justify-content: center;">
+                <button id="logout-cancel-btn" style="flex: 1; padding: 0.8rem; border-radius: var(--border-radius-btn); border: 1px solid var(--border-color); background: transparent; color: var(--text-primary); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                    Cancel
+                </button>
+                <button id="logout-confirm-btn" style="flex: 1; padding: 0.8rem; border-radius: var(--border-radius-btn); border: none; background: var(--accent-red); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);">
+                    Yes, Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Generic Confirmation/Alert Modal -->
+    <div id="generic-confirm-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 9999; font-family: 'Inter', sans-serif; transition: opacity 0.2s;">
+        <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-modal); width: 100%; max-width: 400px; padding: 2.25rem; box-shadow: var(--shadow-lg); text-align: center;">
+            <div id="confirm-modal-icon-wrap" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: rgba(22, 78, 99, 0.1); border-radius: 50%; margin: 0 auto 1.25rem;">
+                <i id="confirm-modal-icon" class="ph ph-question" style="font-size: 2rem; color: var(--accent-blue);"></i>
+            </div>
+            <h3 id="confirm-modal-title" style="color: var(--text-primary); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Confirmation</h3>
+            <p id="confirm-modal-body" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1.75rem; line-height: 1.5; word-break: break-word;">Are you sure you want to proceed?</p>
+            <div style="display: flex; gap: 0.75rem; justify-content: center;">
+                <button id="confirm-modal-cancel-btn" style="flex: 1; padding: 0.8rem; border-radius: var(--border-radius-btn); border: 1px solid var(--border-color); background: transparent; color: var(--text-primary); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                    Cancel
+                </button>
+                <button id="confirm-modal-confirm-btn" style="flex: 1; padding: 0.8rem; border-radius: var(--border-radius-btn); border: none; background: var(--accent-blue); color: white; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- html2pdf.js for exporting dashboard to PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
